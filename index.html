@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WireGrid — Your industrial data, fully open.</title>
+<meta name="description" content="Modern web SCADA platform. No tag-pricing. Connect Grafana, Power BI, Excel directly to your industrial data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root,html[data-theme="dark"]{
+  --bg:#0B1222;--bg2:#0F172A;--surface:#1A2540;--surface2:#1E2D4A;
+  --border:rgba(255,255,255,.1);--border-b:rgba(6,182,212,.25);
+  --text:#F1F5F9;--text2:#B0BEC5;--muted:#6B7D8D;
+  --cyan:#0891B2;--cyan2:#06B6D4;--cyan3:#22D3EE;
+  --cyan-glow:rgba(6,182,212,.18);--cyan-glow2:rgba(6,182,212,.10);
+  --green:#10B981;--amber:#F59E0B;--red:#EF4444;
+  --dot-color:rgba(255,255,255,.05);--dot-panel:rgba(255,255,255,.06);
+  --code-bg:var(--surface);--code-border:var(--border);
+  --nav-bg:rgba(11,18,34,.92);
+  --hero-glow1:rgba(6,182,212,.14);--hero-glow2:rgba(6,182,212,.04);
+  --wsb-bg:var(--bg);--wsb-shadow:rgba(0,0,0,.4);
+  --flow-bg:var(--surface);
+  --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html[data-theme="light"]{
+  --bg:#FFFFFF;--bg2:#F8FAFC;--surface:#F1F5F9;--surface2:#E2E8F0;
+  --border:rgba(0,0,0,.08);--border-b:rgba(8,145,178,.2);
+  --text:#0F172A;--text2:#475569;--muted:#94A3B8;
+  --cyan:#0891B2;--cyan2:#0E7490;--cyan3:#06B6D4;
+  --cyan-glow:rgba(8,145,178,.1);--cyan-glow2:rgba(8,145,178,.06);
+  --green:#059669;--amber:#D97706;--red:#DC2626;
+  --dot-color:rgba(0,0,0,.04);--dot-panel:rgba(0,0,0,.04);
+  --code-bg:#F1F5F9;--code-border:rgba(0,0,0,.08);
+  --nav-bg:rgba(255,255,255,.92);
+  --hero-glow1:rgba(8,145,178,.08);--hero-glow2:rgba(8,145,178,.03);
+  --wsb-bg:#FFFFFF;--wsb-shadow:rgba(0,0,0,.08);
+  --flow-bg:#F1F5F9;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.c{max-width:1100px;margin:0 auto;padding:0 24px}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:16px 24px;transition:background .3s}
+.nav.scrolled{background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav .inner{max-width:1100px;margin:0 auto;display:flex;align-items:center}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+.nav-logo svg{width:20px;height:20px;color:var(--cyan)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:24px}
+.nav-r a.link{color:var(--text2);font-size:13px;font-weight:500;transition:color .2s}
+.nav-r a.link:hover{color:var(--text)}
+.nav-r .cta{background:var(--cyan);color:#fff;font-size:12px;font-weight:700;padding:8px 20px;border-radius:6px;letter-spacing:.3px;transition:all .2s}
+.nav-r .cta:hover{background:var(--cyan2);box-shadow:0 0 24px var(--cyan-glow)}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(circle,var(--hero-glow1) 0%,var(--hero-glow2) 40%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(var(--dot-color) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;opacity:.7}
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border-b);border-radius:99px;padding:6px 16px;font-size:12px;color:var(--cyan);font-weight:500;margin-bottom:32px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+.hero h1 .gr{background:linear-gradient(135deg,var(--cyan),var(--cyan3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* Theme toggle */
+.theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--text2);padding:0}
+.theme-btn:hover{border-color:var(--cyan);color:var(--text)}
+.theme-btn svg{width:16px;height:16px}
+.theme-btn .icon-sun{display:none}
+.theme-btn .icon-moon{display:block}
+html[data-theme="light"] .theme-btn .icon-sun{display:block}
+html[data-theme="light"] .theme-btn .icon-moon{display:none}
+html[data-theme="light"] .hero h1 .gr{background:linear-gradient(135deg,var(--cyan),var(--cyan2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+html[data-theme="light"] .quote{background:var(--surface)}
+html[data-theme="light"] .price-card .pbadge{color:#fff}
+.hero .sub{font-size:clamp(16px,1.8vw,19px);color:var(--text2);max-width:560px;margin:0 auto 40px;line-height:1.6}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-p{display:inline-block;background:var(--cyan);color:#fff;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;transition:all .2s;box-shadow:0 0 40px var(--cyan-glow),0 4px 12px var(--cyan-glow2)}
+.btn-p:hover{background:var(--cyan2);box-shadow:0 0 60px var(--cyan-glow),0 4px 20px var(--cyan-glow2);transform:translateY(-2px)}
+.btn-s{display:inline-block;color:var(--text2);font-size:15px;font-weight:500;padding:14px 32px;border-radius:8px;border:1px solid var(--border);transition:all .2s}
+.btn-s:hover{border-color:var(--text2);color:var(--text);background:rgba(255,255,255,.03)}
+.hero-foot{margin-top:64px;color:var(--muted);font-size:13px;letter-spacing:.5px}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:56px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:32px;font-weight:800;color:var(--cyan);display:block}
+.hero-stat .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* SECTIONS */
+.sec{padding:120px 0;position:relative}
+.sec.alt{background:var(--bg2)}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
+.sec h2{font-size:clamp(30px,4vw,46px);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:20px}
+.sec .desc{font-size:17px;color:var(--text2);max-width:600px;line-height:1.7}
+.sec .desc.ctr{margin:0 auto;text-align:center}
+
+/* SPLIT LAYOUT */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.split.rev{direction:rtl}.split.rev>*{direction:ltr}
+
+/* DETAIL LIST */
+.dlist{list-style:none;margin:28px 0 0;display:flex;flex-direction:column;gap:16px}
+.dlist li{font-size:15px;color:var(--text2);display:flex;align-items:flex-start;gap:12px;line-height:1.5}
+.dlist li .ico{width:28px;height:28px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.dlist li .ico svg{width:14px;height:14px;color:var(--cyan)}
+.dlist li strong{color:var(--text);font-weight:600}
+
+/* PANEL (dark card for illustrations) */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;inset:0;background-image:radial-gradient(var(--dot-panel) 1px,transparent 1px);background-size:20px 20px;opacity:.7}
+.panel>*{position:relative;z-index:1}
+.note{color:var(--muted);font-size:13px;font-style:italic;margin-top:24px}
+
+/* PROTOCOL CARDS */
+.proto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.proto{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 24px;transition:all .25s}
+.proto:hover{border-color:var(--cyan);transform:translateY(-3px);box-shadow:0 12px 40px var(--cyan-glow2),0 0 0 1px var(--cyan-glow)}
+.proto h3{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.proto h3 .badge{font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:var(--cyan);font-weight:600}
+.proto .pdesc{font-size:13px;color:var(--text2);margin-bottom:12px}
+.proto .pdetails{font-size:12px;color:var(--muted);line-height:1.8}
+.proto .pdetails span{display:block}
+.proto .pdetails code{font-family:var(--mono);color:var(--text2);font-size:11px;background:rgba(255,255,255,.04);padding:1px 5px;border-radius:3px}
+
+/* TOOLS GRID */
+.tools{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:48px}
+.tool{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px 12px;text-align:center;transition:all .25s;cursor:default}
+.tool:hover{border-color:var(--cyan);background:var(--surface2);transform:translateY(-3px);box-shadow:0 8px 32px var(--cyan-glow2),0 0 0 1px var(--cyan-glow)}
+.tool svg{width:32px;height:32px;color:var(--cyan);margin:0 auto 12px;display:block;opacity:.8}
+.tool:hover svg{opacity:1}
+.tool b{display:block;font-size:13px;font-weight:600}
+.tool span{font-size:11px;color:var(--muted);margin-top:2px;display:block}
+.quote{position:relative;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:12px;padding:28px 32px 28px 40px;font-size:16px;color:var(--text2);line-height:1.7;max-width:720px;margin:0 auto}
+.quote::before{content:'\201C';position:absolute;top:8px;left:16px;font-size:40px;color:var(--cyan);font-family:Georgia,serif;line-height:1}
+
+/* CODE BLOCK */
+.codeblock{background:var(--code-bg);border:1px solid var(--code-border);border-radius:10px;padding:20px 24px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;overflow-x:auto;margin:20px 0}
+.codeblock .cm{color:var(--muted)}.codeblock .kw{color:var(--cyan)}.codeblock .st{color:var(--green)}
+
+/* WIRESHEET */
+.ws-canvas{aspect-ratio:4/3}
+.wsb{position:absolute;background:var(--wsb-bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:10px;z-index:2;box-shadow:0 4px 20px var(--wsb-shadow);min-width:120px}
+.wsb .t{font-size:9px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.wsb .p{display:flex;align-items:center;gap:6px;margin:3px 0;color:var(--text2)}
+.wsb .d{width:5px;height:5px;border-radius:50%}
+.wsb .d.i{background:var(--green)}.wsb .d.o{background:var(--amber)}
+
+/* FEATURES GRID */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 24px;transition:all .25s;position:relative;overflow:hidden}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s}
+.feat:hover{border-color:var(--cyan);transform:translateY(-3px);box-shadow:0 12px 40px var(--cyan-glow2),0 0 0 1px var(--cyan-glow)}
+.feat:hover::before{opacity:1}
+.feat svg.fi{width:24px;height:24px;color:var(--cyan);margin-bottom:14px;opacity:.8}
+.feat:hover svg.fi{opacity:1}
+.feat h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.feat p{font-size:13px;color:var(--text2);line-height:1.6}
+.feat .sub-details{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.7}
+.feat .sub-details span{display:block}
+
+/* ALARM FLOW */
+.flow{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;margin:40px 0 20px}
+.flow-step{background:var(--flow-bg);border:1px solid var(--border);border-radius:8px;padding:12px 18px;font-size:13px;font-weight:500;text-align:center;min-width:120px}
+.flow-step.active{border-color:var(--cyan);color:var(--cyan)}
+.flow-arrow{color:var(--muted);font-size:18px}
+
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.price-card{border:1px solid var(--border);border-radius:16px;padding:40px 32px;position:relative}
+.price-card.them{background:var(--surface)}
+.price-card.us{background:linear-gradient(135deg,var(--cyan-glow),var(--cyan-glow2));border-color:var(--cyan);box-shadow:0 0 40px var(--cyan-glow2)}
+.price-card .pbadge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--cyan);color:var(--bg);font-size:11px;font-weight:700;padding:4px 14px;border-radius:99px;letter-spacing:.5px}
+.price-card h3{font-size:18px;font-weight:700;margin-bottom:24px;text-align:center}
+.price-card h3.them-h{color:var(--text2)}
+.price-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+.price-row:last-child{border:none}
+.price-row .l{color:var(--text2)}
+.price-row .v{font-weight:600}
+.price-row .v.bad{color:var(--red);opacity:.7}
+.price-row .v.good{color:var(--cyan)}
+
+/* DEPLOY */
+.deploy-row{display:flex;gap:40px;justify-content:center;margin:48px 0 16px;flex-wrap:wrap}
+.deploy-item{display:flex;flex-direction:column;align-items:center;gap:12px;width:120px}
+.deploy-item .circle{width:64px;height:64px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .25s}
+.deploy-item:hover .circle{border-color:var(--cyan);box-shadow:0 0 32px var(--cyan-glow),0 0 0 1px var(--cyan-glow)}
+.deploy-item .circle svg{width:28px;height:28px;color:var(--cyan)}
+.deploy-item span{font-size:13px;color:var(--text2);font-weight:500}
+
+/* ARCH DIAGRAM */
+.arch{display:flex;flex-direction:column;align-items:center;gap:0;margin:48px auto;max-width:700px}
+.arch-row{display:flex;align-items:center;gap:12px;width:100%}
+.arch-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 20px;font-size:13px;font-weight:500;text-align:center;flex:1}
+.arch-box.brand{border-color:var(--cyan);color:var(--cyan)}
+.arch-box small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.arch-arrow{color:var(--muted);font-size:20px;padding:4px 0;text-align:center}
+
+/* TECH / FOOTER */
+.tech-sec{padding:48px 0;text-align:center}
+.tech-row{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:12px}
+.tech-row span{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:500;transition:color .2s}
+.tech-row span:hover{color:var(--text2)}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;padding:40px 36px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.modal h2{font-size:22px;font-weight:700;margin-bottom:4px}
+.modal .modal-sub{font-size:14px;color:var(--text2);margin-bottom:28px}
+.modal .field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+.modal .field label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.modal .field input,.modal .field textarea{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:14px;font-family:var(--sans);color:var(--text);outline:none;transition:border-color .2s;width:100%}
+.modal .field input:focus,.modal .field textarea:focus{border-color:var(--cyan)}
+.modal .field input::placeholder,.modal .field textarea::placeholder{color:var(--muted)}
+.modal .field textarea{resize:vertical;min-height:60px}
+.modal .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .btn-submit{width:100%;margin-top:8px}
+.modal .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;transition:color .2s}
+.modal .close-btn:hover{color:var(--text)}
+.modal .close-btn svg{width:20px;height:20px}
+.modal-success{text-align:center;display:none}
+.modal-success.show{display:block}
+.modal-success .check{width:48px;height:48px;color:var(--green);margin:0 auto 16px}
+.modal-success h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal-success p{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.modal-success .install-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;text-align:left}
+.modal-success .install-box .cm{color:var(--muted)}
+.modal-success .install-box .kw{color:var(--cyan)}
+.modal-success .install-box .st{color:var(--green)}
+.modal-form.hide{display:none}
+.field-error{font-size:11px;color:var(--red)}
+
+footer{border-top:1px solid var(--border);padding:56px 0;text-align:center}
+footer .ft{font-size:15px;color:var(--text2);margin-bottom:24px;max-width:420px;margin-left:auto;margin-right:auto}
+footer .fl{display:flex;gap:28px;justify-content:center;margin-bottom:24px}
+footer .fl a{color:var(--muted);font-size:13px;font-weight:500;transition:color .2s}
+footer .fl a:hover{color:var(--cyan)}
+footer .fc{font-size:11px;color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .split{grid-template-columns:1fr;gap:40px}
+  .split.rev{direction:ltr}
+  .tools{grid-template-columns:repeat(3,1fr)}
+  .proto-grid{grid-template-columns:1fr}
+  .feats{grid-template-columns:1fr}
+  .price-grid{grid-template-columns:1fr}
+  .ws-canvas{display:none}
+  .arch-row{flex-direction:column}
+}
+@media(max-width:600px){
+  .tools{grid-template-columns:repeat(2,1fr)}
+  .nav-r .link{display:none}
+  .hero h1{letter-spacing:-1px}
+  .hero-stats{gap:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="4" r="1.5"/><circle cx="12" cy="4" r="1.5"/><circle cx="20" cy="4" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="20" cy="12" r="1.5"/><circle cx="4" cy="20" r="1.5"/><circle cx="12" cy="20" r="1.5"/><circle cx="20" cy="20" r="1.5"/><path d="M4 4 L20 12 L4 20"/></svg>
+      WireGrid
+    </a>
+    <div class="nav-r">
+      <a href="#protocols" class="link">Protocols</a>
+      <a href="#integrations" class="link">Integrations</a>
+      <a href="#wiresheet" class="link">Wiresheet</a>
+      <a href="#features" class="link">Features</a>
+      <a href="#pricing" class="link">Pricing</a>
+      <a href="#" onclick="openDemo();return false" class="cta">REQUEST A DEMO</a>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="dot"></span> Now available</div>
+    <h1>Your industrial data,<br><span class="gr">fully open.</span></h1>
+    <p class="sub">The SCADA platform that lets you connect Grafana, Power BI, Excel — or any tool you already use. No tag-pricing, no lock-in.</p>
+    <div class="hero-ctas">
+      <a href="#" onclick="openDemo();return false" class="btn-p">Request a demo</a>
+      <a href="#protocols" class="btn-s">See how it works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">3</span><span class="lbl">Protocols</span></div>
+      <div class="hero-stat"><span class="num">&infin;</span><span class="lbl">Points included</span></div>
+      <div class="hero-stat"><span class="num">&lt;5 min</span><span class="lbl">Setup time</span></div>
+      <div class="hero-stat"><span class="num">100%</span><span class="lbl">Open data</span></div>
+    </div>
+    <p class="hero-foot">The modern alternative to Ignition &amp; Niagara N4</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PROTOCOLS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec alt" id="protocols">
+  <div class="c">
+    <div style="text-align:center;margin-bottom:16px">
+      <div class="tag">Multi-protocol</div>
+      <h2>Connect any equipment.</h2>
+      <p class="desc ctr">WireGrid speaks the three major industrial protocols natively. Configure a driver, discover available points on the network, and start polling — in seconds, not hours.</p>
+    </div>
+    <div class="proto-grid">
+      <div class="proto">
+        <h3>Modbus TCP <span class="badge">Built-in</span></h3>
+        <p class="pdesc">The most widely used protocol in industrial automation. Read/write holding registers, coils, and input registers.</p>
+        <div class="pdetails">
+          <span>Configurable host, port, unit ID</span>
+          <span>Holding registers &amp; coils</span>
+          <span>Read &amp; write support</span>
+          <span>Auto-discovery of register map</span>
+          <span>Example: <code>192.168.1.10:502</code></span>
+        </div>
+      </div>
+      <div class="proto">
+        <h3>OPC-UA <span class="badge">Built-in</span></h3>
+        <p class="pdesc">The modern standard for machine-to-machine communication. Browse the server node tree and subscribe to values.</p>
+        <div class="pdetails">
+          <span>Endpoint URL + namespace URI</span>
+          <span>Browse path node navigation</span>
+          <span>Hierarchical point tree</span>
+          <span>Auto-discovery of node tree</span>
+          <span>Example: <code>opc.tcp://host:4840</code></span>
+        </div>
+      </div>
+      <div class="proto">
+        <h3>BACnet/IP <span class="badge">Built-in</span></h3>
+        <p class="pdesc">The standard for building automation systems. Read analog/binary values, setpoints, and schedules from BACnet devices.</p>
+        <div class="pdetails">
+          <span>Device instance ID configuration</span>
+          <span>Analog &amp; binary object types</span>
+          <span>Read &amp; write support</span>
+          <span>Auto-discovery of objects</span>
+          <span>Example: <code>device 100</code></span>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:24px">Each driver includes <strong style="color:var(--text2)">auto-discovery</strong> — scan your network, select the points you need, and import them in one click. Configurable polling intervals from 100ms to 60s per driver.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- INTEGRATIONS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec" id="integrations">
+  <div class="c">
+    <div style="text-align:center;margin-bottom:56px">
+      <div class="tag">Open data</div>
+      <h2>Stop fighting your SCADA<br>to get your data out.</h2>
+      <p class="desc ctr">Most platforms lock your data behind proprietary formats and expensive export modules. WireGrid stores everything in PostgreSQL &mdash; a database your tools already understand. Config, historian, alarms &mdash; it's all standard SQL.</p>
+    </div>
+
+    <div class="tools">
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M8 8h8M8 16h5"/></svg>
+        <b>Grafana</b><span>Embedded dashboards,<br>auto-provisioned</span>
+      </div>
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="7 14 10 10 13 13 17 8"/></svg>
+        <b>Power BI</b><span>Direct PostgreSQL<br>connector</span>
+      </div>
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7z"/></svg>
+        <b>Excel</b><span>Power Query,<br>ODBC, live refresh</span>
+      </div>
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="8 17 8 7 12 12 16 7 16 17"/></svg>
+        <b>Tableau</b><span>Native PostgreSQL<br>driver</span>
+      </div>
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 17l6-6 4 4 6-6"/><polyline points="16 9 20 9 20 13"/></svg>
+        <b>Python / R</b><span>psycopg2, pandas,<br>SQLAlchemy</span>
+      </div>
+      <div class="tool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <b>REST API</b><span>JSON endpoints,<br>API key auth</span>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:56px;gap:48px">
+      <div>
+        <h3 style="font-size:20px;font-weight:700;margin-bottom:12px">Full REST API included</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px">Every entity in WireGrid is accessible through a documented REST API. List drivers, read point values, query alarm history, fetch machine configurations &mdash; all with a simple API key.</p>
+        <ul class="dlist" style="margin-top:16px">
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></span> <strong>8 API endpoints</strong> &mdash; drivers, machines, points, alarms, history, tags, units, Grafana</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> <strong>API key authentication</strong> &mdash; SHA-256 hashed keys, X-API-Key header, 60 req/min rate limiting</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span> <strong>Pagination &amp; filtering</strong> &mdash; standard envelope format, cursor-based pagination</li>
+        </ul>
+      </div>
+      <div class="codeblock">
+        <span class="cm"># List all drivers</span><br>
+        <span class="kw">curl</span> -H <span class="st">"X-API-Key: wg_..."</span> \<br>
+        &nbsp;&nbsp;http://wiregrid:8000/api/v1/drivers<br><br>
+        <span class="cm"># Get active alarms</span><br>
+        <span class="kw">curl</span> -H <span class="st">"X-API-Key: wg_..."</span> \<br>
+        &nbsp;&nbsp;http://wiregrid:8000/api/v1/alarms/active<br><br>
+        <span class="cm"># Query point history (last 6h)</span><br>
+        <span class="kw">curl</span> -H <span class="st">"X-API-Key: wg_..."</span> \<br>
+        &nbsp;&nbsp;http://wiregrid:8000/api/v1/history/42?range=6h
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:56px">
+      If your tool can read a database or call an API, it works with WireGrid. No plugins, no connectors to buy, no proprietary SDK to learn.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- WIRESHEET -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec alt" id="wiresheet">
+  <div class="c">
+    <div class="split">
+      <div>
+        <div class="tag">Visual logic</div>
+        <h2>Build control logic<br>visually.</h2>
+        <p class="desc">Drag blocks, connect pins, create automation &mdash; all from your browser. Inspired by the best of Niagara N4's wiresheet, without the Java complexity.</p>
+        <ul class="dlist">
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span> <strong>Block library</strong> &mdash; arithmetic (add, subtract, multiply), logic (AND, OR, NOT), comparison (greater than, less than), timers, constants</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> <strong>Live data binding</strong> &mdash; input/output pins connect directly to machine points. See real-time values flowing through your logic</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> <strong>Versioned</strong> &mdash; every wiresheet change is tracked in the commit history. See diffs, revert to any previous version</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span> <strong>Python alternative</strong> &mdash; for complex logic, switch to Python programs. Git-hosted, versioned, with compiled pin mapping</li>
+        </ul>
+        <p class="note">If you've used Niagara N4, you'll feel right at home. Same concept, modern execution.</p>
+      </div>
+      <div class="panel ws-canvas">
+        <svg width="100%" height="100%" style="position:absolute;inset:0;z-index:1">
+          <line x1="18%" y1="20%" x2="42%" y2="44%" stroke="rgba(6,182,212,.35)" stroke-width="1.5"/>
+          <line x1="82%" y1="20%" x2="58%" y2="44%" stroke="rgba(6,182,212,.35)" stroke-width="1.5"/>
+          <line x1="50%" y1="58%" x2="50%" y2="72%" stroke="rgba(6,182,212,.35)" stroke-width="1.5"/>
+        </svg>
+        <div class="wsb" style="top:10%;left:6%">
+          <div class="t">Supply Temp</div>
+          <div class="p"><span class="d o"></span> value &rarr; 21.4 &deg;C</div>
+        </div>
+        <div class="wsb" style="top:10%;right:6%">
+          <div class="t">Setpoint</div>
+          <div class="p"><span class="d o"></span> value &rarr; 22.0 &deg;C</div>
+        </div>
+        <div class="wsb" style="top:38%;left:50%;transform:translateX(-50%)">
+          <div class="t">Subtract</div>
+          <div class="p"><span class="d i"></span> a</div>
+          <div class="p"><span class="d i"></span> b</div>
+          <div class="p"><span class="d o"></span> result &rarr; &minus;0.6</div>
+        </div>
+        <div class="wsb" style="top:68%;left:50%;transform:translateX(-50%)">
+          <div class="t">Greater Than</div>
+          <div class="p"><span class="d i"></span> value</div>
+          <div class="p"><span class="d i"></span> threshold &rarr; 2.0</div>
+          <div class="p"><span class="d o"></span> result &rarr; false</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ALARMS (dedicated section) -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec" id="alarms">
+  <div class="c">
+    <div class="split rev">
+      <div>
+        <div class="tag">Alarm engine</div>
+        <h2>Get alerted,<br>not surprised.</h2>
+        <p class="desc">WireGrid includes a full alarm engine that monitors your data points and driver connections in real time. Configure thresholds, set delays to avoid false positives, and route notifications to the right people.</p>
+        <ul class="dlist">
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span> <strong>Value conditions</strong> &mdash; high, low, or equal thresholds on any machine point. Deadband hysteresis to prevent alarm chatter</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55"/><path d="M5 12.55a10.94 10.94 0 015.17-2.39"/></svg></span> <strong>Connection loss</strong> &mdash; automatically detect when a driver goes offline. Configurable delay before raising the alarm</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span> <strong>Email notifications</strong> &mdash; assign notification groups with team members. When an alarm fires, the right people get emailed instantly</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></span> <strong>Fault injection testing</strong> &mdash; simulate disconnects, value spikes, sensor drift. Verify your alarm config catches real incidents before they happen</li>
+        </ul>
+      </div>
+      <div class="panel" style="padding:28px 24px">
+        <h4 style="font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:20px">ALARM LIFECYCLE</h4>
+        <div class="flow">
+          <div class="flow-step">Normal</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step active">Active</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step" style="border-color:var(--amber);color:var(--amber)">Acknowledged</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step" style="border-color:var(--green);color:var(--green)">Cleared</div>
+        </div>
+        <div style="margin-top:24px;font-size:12px;color:var(--text2);line-height:2">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:6px 0"><span>Severity levels</span><span style="color:var(--muted)">Info &middot; Warning &middot; Critical</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:6px 0"><span>Deadband</span><span style="color:var(--muted)">Configurable hysteresis per alarm</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:6px 0"><span>Delay</span><span style="color:var(--muted)">Time-based confirmation before raising</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:6px 0"><span>Notifications</span><span style="color:var(--muted)">Email to groups + individual addresses</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span>History</span><span style="color:var(--muted)">Full event log with timestamps</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HISTORIAN & REAL-TIME -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec alt" id="historian">
+  <div class="c">
+    <div class="split">
+      <div>
+        <div class="tag">Historian &amp; real-time</div>
+        <h2>From milliseconds<br>to months.</h2>
+        <p class="desc">WireGrid captures live data via WebSocket and archives it with TimescaleDB &mdash; the time-series extension for PostgreSQL. Trend analysis, downsampling, and retention policies built in.</p>
+        <ul class="dlist">
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> <strong>WebSocket live push</strong> &mdash; data pushed to your browser instantly, not polled. Automatic fallback to polling if connection drops</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span> <strong>Flexible archiving</strong> &mdash; per-point config: archive on change (with deadband) or at fixed intervals (1s to 60s)</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 18 7 12 11 15 15 6 21 10"/></svg></span> <strong>Built-in trend viewer</strong> &mdash; multi-point overlay, 1h to 7d ranges, automatic downsampling for performance</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span> <strong>Standard TimescaleDB</strong> &mdash; query your history with any SQL tool. Retention policies, continuous aggregates, compression &mdash; all built in</li>
+        </ul>
+      </div>
+      <div class="panel" style="padding:28px 24px">
+        <h4 style="font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:20px">DATA FLOW</h4>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;flex:1;text-align:center">PLC / Sensor</div>
+            <span style="color:var(--muted)">&rarr;</span>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;flex:1;text-align:center">Driver<br><span style="font-size:10px;color:var(--muted)">Modbus / OPC-UA / BACnet</span></div>
+          </div>
+          <div style="text-align:center;color:var(--muted)">&darr;</div>
+          <div style="background:var(--bg);border:1px solid var(--cyan);border-radius:6px;padding:10px 14px;font-size:12px;text-align:center;color:var(--cyan)">WireGrid Runtime<br><span style="font-size:10px;color:var(--text2)">Tag cache + Alarm evaluator + Historian writer</span></div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1;text-align:center;color:var(--muted)">&darr;</div>
+            <div style="flex:1;text-align:center;color:var(--muted)">&darr;</div>
+            <div style="flex:1;text-align:center;color:var(--muted)">&darr;</div>
+          </div>
+          <div style="display:flex;gap:12px">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;flex:1;text-align:center">Redis<br><span style="color:var(--muted)">pub/sub</span></div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;flex:1;text-align:center">TimescaleDB<br><span style="color:var(--muted)">historian</span></div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;flex:1;text-align:center">PostgreSQL<br><span style="color:var(--muted)">config + alarms</span></div>
+          </div>
+          <div style="text-align:center;color:var(--muted)">&darr;</div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;text-align:center">WebSocket &rarr; Browser &nbsp;&nbsp;|&nbsp;&nbsp; REST API &rarr; External tools</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- VERSION CONTROL -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="c">
+    <div class="split rev">
+      <div>
+        <div class="tag">Version control</div>
+        <h2>Track every change.<br>Deploy with confidence.</h2>
+        <p class="desc">WireGrid brings git-like versioning to your SCADA configuration. Every driver, machine, point, alarm, tag, and wiresheet change is tracked. See exactly what changed, who changed it, and when.</p>
+        <ul class="dlist">
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/></svg></span> <strong>Commit &amp; Deploy in one click</strong> &mdash; group your changes, add a message, and push to production. The runtime hot-reloads without downtime</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></span> <strong>Instant rollback</strong> &mdash; made a mistake? Revert to any previous revision in one click. The full configuration is restored immediately</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span> <strong>Full audit trail</strong> &mdash; every action is logged with the authenticated user. Who committed, who deployed, who acknowledged that alarm at 3 AM</li>
+          <li><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> <strong>14 entity types versioned</strong> &mdash; drivers, points, machines, machine points, tags, units, relations, alarms, programs, wiresheets, blocks, links &mdash; nothing escapes the history</li>
+        </ul>
+      </div>
+      <div class="panel" style="padding:28px 24px">
+        <h4 style="font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:20px">REVISION HISTORY</h4>
+        <div style="font-size:12px;line-height:1.6">
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center">
+            <span style="font-family:var(--mono);color:var(--cyan);min-width:28px">#5</span>
+            <span style="flex:1">Add BACnet chiller driver</span>
+            <span style="color:var(--muted);font-size:11px">Admin</span>
+            <span style="color:var(--muted);font-size:11px;min-width:64px;text-align:right">2 min ago</span>
+            <span style="font-size:10px;background:var(--green);color:var(--bg);padding:2px 8px;border-radius:4px;font-weight:600">deployed</span>
+          </div>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center">
+            <span style="font-family:var(--mono);color:var(--text2);min-width:28px">#4</span>
+            <span style="flex:1">Configure supply temp alarm</span>
+            <span style="color:var(--muted);font-size:11px">Admin</span>
+            <span style="color:var(--muted);font-size:11px;min-width:64px;text-align:right">1 hour ago</span>
+            <span style="min-width:64px"></span>
+          </div>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center">
+            <span style="font-family:var(--mono);color:var(--text2);min-width:28px">#3</span>
+            <span style="flex:1">Add wiresheet logic for AHU</span>
+            <span style="color:var(--muted);font-size:11px">Admin</span>
+            <span style="color:var(--muted);font-size:11px;min-width:64px;text-align:right">yesterday</span>
+            <span style="min-width:64px"></span>
+          </div>
+          <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center">
+            <span style="font-family:var(--mono);color:var(--text2);min-width:28px">#2</span>
+            <span style="flex:1">Import OPC-UA plant points</span>
+            <span style="color:var(--muted);font-size:11px">Admin</span>
+            <span style="color:var(--muted);font-size:11px;min-width:64px;text-align:right">2 days ago</span>
+            <span style="min-width:64px"></span>
+          </div>
+          <div style="display:flex;gap:12px;padding:10px 0;align-items:center">
+            <span style="font-family:var(--mono);color:var(--text2);min-width:28px">#1</span>
+            <span style="flex:1">Initial configuration</span>
+            <span style="color:var(--muted);font-size:11px">seeder</span>
+            <span style="color:var(--muted);font-size:11px;min-width:64px;text-align:right">3 days ago</span>
+            <span style="min-width:64px"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MORE FEATURES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec alt" id="features">
+  <div class="c">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="tag">And more</div>
+      <h2>Built for real operations.</h2>
+      <p class="desc ctr">Everything an integrator or facility manager needs, without the bloat.</p>
+    </div>
+    <div class="feats">
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <h3>Role-based access</h3>
+        <p>Two roles: Admin (full config, commit, deploy) and Operator (monitor, acknowledge alarms). Internal user management with notification groups.</p>
+        <div class="sub-details">
+          <span>Admin: configure drivers, machines, alarms, commit &amp; deploy</span>
+          <span>Operator: view dashboards, ack alarms, read-only config</span>
+          <span>Session-based auth, internal user database</span>
+        </div>
+      </div>
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 6l-4 4-4-4"/><rect x="2" y="10" width="20" height="12" rx="2"/><path d="M6 14h.01M10 14h.01M14 14h.01M18 14h.01"/></svg>
+        <h3>Machine hierarchy</h3>
+        <p>Organize your equipment with machines, sub-points, tags, and relations. Model your facility structure with "feeds", "measures", and "controls" relationships.</p>
+        <div class="sub-details">
+          <span>Machine points: linked to drivers or standalone setpoints</span>
+          <span>Tag system: site, building, floor, zone, equipment type</span>
+          <span>Relations: machine-to-machine (feeds, measures, controls)</span>
+        </div>
+      </div>
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <h3>Embedded Grafana</h3>
+        <p>Grafana OSS is bundled and auto-configured. TimescaleDB datasource is provisioned automatically. Build custom dashboards without leaving WireGrid.</p>
+        <div class="sub-details">
+          <span>Grafana OSS 11.6, embedded in the UI</span>
+          <span>Auto-provisioned PostgreSQL + JSON API datasources</span>
+          <span>Anonymous access for seamless embedding</span>
+        </div>
+      </div>
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h3>Production / Working copy</h3>
+        <p>Toggle between what's running in production and your pending changes. Operators see the live state. Admins can preview their modifications before committing.</p>
+        <div class="sub-details">
+          <span>Changes never affect production until committed</span>
+          <span>Visual toggle between deployed and working copy</span>
+          <span>Dirty count badge shows pending changes</span>
+        </div>
+      </div>
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        <h3>Fault injection &amp; scenarios</h3>
+        <p>Built-in test scenarios to validate your alarm configuration. Simulate driver disconnects, temperature spikes, sensor drift, and verify everything reacts correctly.</p>
+        <div class="sub-details">
+          <span>7 predefined scenarios: disconnect, spike, drift, recover...</span>
+          <span>HTTP API per simulator for custom testing</span>
+          <span>Verify email notifications with built-in mail viewer</span>
+        </div>
+      </div>
+      <div class="feat">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <h3>i18n ready</h3>
+        <p>The entire UI is internationalized with 400+ translation keys. English out of the box, ready for French, German, Spanish or any language your team needs.</p>
+        <div class="sub-details">
+          <span>Single JSON file per language</span>
+          <span>Interpolation support for dynamic values</span>
+          <span>All labels, messages, and errors translated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PRICING -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec" id="pricing">
+  <div class="c">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="tag">Pricing</div>
+      <h2>No tag-pricing. Ever.</h2>
+      <p class="desc ctr">Traditional vendors charge per data point. Add 500 sensors? Pay thousands more per year. With WireGrid, the price is fixed &mdash; whether you have 100 points or 100,000.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card us">
+        <div class="pbadge">RECOMMENDED</div>
+        <h3>WireGrid</h3>
+        <div class="price-row"><span class="l">Points</span><span class="v good">Unlimited</span></div>
+        <div class="price-row"><span class="l">Data access</span><span class="v good">Open &mdash; SQL &amp; API</span></div>
+        <div class="price-row"><span class="l">Setup time</span><span class="v good">Minutes</span></div>
+        <div class="price-row"><span class="l">External tools</span><span class="v good">Built-in</span></div>
+        <div class="price-row"><span class="l">Protocols included</span><span class="v good">All 3</span></div>
+        <div class="price-row"><span class="l">Historian</span><span class="v good">Included</span></div>
+        <div class="price-row"><span class="l">Alarms + email</span><span class="v good">Included</span></div>
+        <div class="price-row"><span class="l">API access</span><span class="v good">Included</span></div>
+        <div class="price-row"><span class="l">Java required</span><span class="v good">No</span></div>
+      </div>
+      <div class="price-card them">
+        <h3 class="them-h">Traditional SCADA</h3>
+        <div class="price-row"><span class="l">Points</span><span class="v bad">$2K &mdash; $25K+/yr</span></div>
+        <div class="price-row"><span class="l">Data access</span><span class="v bad">Proprietary, locked</span></div>
+        <div class="price-row"><span class="l">Setup time</span><span class="v bad">Days to weeks</span></div>
+        <div class="price-row"><span class="l">External tools</span><span class="v bad">Extra modules, $$</span></div>
+        <div class="price-row"><span class="l">Protocols included</span><span class="v bad">Varies, extra $$</span></div>
+        <div class="price-row"><span class="l">Historian</span><span class="v bad">Extra module</span></div>
+        <div class="price-row"><span class="l">Alarms + email</span><span class="v bad">Extra module</span></div>
+        <div class="price-row"><span class="l">API access</span><span class="v bad">Extra module</span></div>
+        <div class="price-row"><span class="l">Java required</span><span class="v bad">Yes</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- DEPLOY -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="sec alt">
+  <div class="c" style="text-align:center">
+    <div class="tag">Deployment</div>
+    <h2>Up and running in 5 minutes.</h2>
+    <p class="desc ctr">WireGrid runs in Docker. On your server, in the cloud, or on an edge device. No Java, no Windows Server, no IT department required. One command is all it takes.</p>
+    <div class="deploy-row">
+      <div class="deploy-item">
+        <div class="circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+        <span>On-premise</span>
+      </div>
+      <div class="deploy-item">
+        <div class="circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></div>
+        <span>Cloud</span>
+      </div>
+      <div class="deploy-item">
+        <div class="circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
+        <span>Edge device</span>
+      </div>
+    </div>
+    <div class="codeblock" style="max-width:500px;margin:24px auto;text-align:left">
+      <span class="cm"># Install &amp; run WireGrid</span><br>
+      <span class="kw">docker compose</span> up -d<br><br>
+      <span class="cm"># Open in your browser</span><br>
+      <span class="kw">open</span> http://localhost:8000<br><br>
+      <span class="cm"># Login</span><br>
+      <span class="st">admin@wiregrid.local</span> / wiregrid
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<div class="tech-sec">
+  <div class="c">
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase">Built on battle-tested open source</p>
+    <div class="tech-row">
+      <span>PostgreSQL</span><span>TimescaleDB</span><span>Laravel 11</span><span>Vue 3</span><span>Python</span><span>FastAPI</span><span>Docker</span><span>Redis</span><span>Grafana</span>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO MODAL -->
+<div class="modal-overlay" id="demoModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeDemo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+
+    <div class="modal-form" id="demoForm">
+      <h2>Try WireGrid</h2>
+      <p class="modal-sub">Fill in your details and get instant access to run WireGrid locally.</p>
+
+      <form onsubmit="submitDemo(event)">
+        <div class="row2">
+          <div class="field">
+            <label for="d-name">Name *</label>
+            <input id="d-name" type="text" placeholder="John Doe" required>
+          </div>
+          <div class="field">
+            <label for="d-email">Work email *</label>
+            <input id="d-email" type="email" placeholder="john@company.com" required>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="d-company">Company *</label>
+            <input id="d-company" type="text" placeholder="Acme Corp" required>
+          </div>
+          <div class="field">
+            <label for="d-role">Your role</label>
+            <input id="d-role" type="text" placeholder="Integrator, Facility Manager...">
+          </div>
+        </div>
+        <div class="field">
+          <label for="d-msg">Message (optional)</label>
+          <textarea id="d-msg" placeholder="Tell us about your use case..."></textarea>
+        </div>
+        <div id="demoError" class="field-error" style="margin-bottom:8px"></div>
+        <button type="submit" class="btn-p btn-submit" id="demoSubmitBtn">Get started</button>
+      </form>
+    </div>
+
+    <div class="modal-success" id="demoSuccess">
+      <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <h3>Check your inbox!</h3>
+      <p>We've created a personal demo account for you and sent your login credentials by email. You'll be able to explore the full WireGrid interface in seconds.</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:12px">Didn't receive it? Check your spam folder or contact us at contact@wiregrid.fr</p>
+      <p style="margin-top:16px"><a href="https://demo.wiregrid.fr" class="btn-p" style="font-size:13px;padding:10px 24px">Go to demo</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="c">
+    <p class="ft">Built for engineers who need their data accessible, not locked away.</p>
+    <div class="fl">
+      <a href="#" onclick="openDemo();return false">Request a demo</a>
+      <a href="#">Documentation</a>
+      <a href="#">API Reference</a>
+      <a href="#">GitHub</a>
+    </div>
+    <p class="fc">&copy; 2026 WireGrid. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>40)});
+
+// Theme toggle
+const html=document.documentElement;
+const saved=localStorage.getItem('wg-theme');
+if(saved)html.setAttribute('data-theme',saved);
+else if(window.matchMedia('(prefers-color-scheme:light)').matches)html.setAttribute('data-theme','light');
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  const next=html.getAttribute('data-theme')==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('wg-theme',next);
+});
+
+// Demo modal
+function openDemo(){
+  document.getElementById('demoModal').classList.add('open');
+  document.getElementById('demoForm').classList.remove('hide');
+  document.getElementById('demoSuccess').classList.remove('show');
+  document.getElementById('demoError').textContent='';
+}
+function closeDemo(){document.getElementById('demoModal').classList.remove('open')}
+document.getElementById('demoModal').addEventListener('click',function(e){
+  if(e.target===this)closeDemo();
+});
+
+async function submitDemo(e){
+  e.preventDefault();
+  const btn=document.getElementById('demoSubmitBtn');
+  const err=document.getElementById('demoError');
+  err.textContent='';
+  btn.disabled=true;btn.textContent='Sending...';
+
+  const body={
+    name:document.getElementById('d-name').value.trim(),
+    email:document.getElementById('d-email').value.trim(),
+    company:document.getElementById('d-company').value.trim(),
+    role:document.getElementById('d-role').value.trim(),
+    message:document.getElementById('d-msg').value.trim(),
+  };
+
+  try{
+    const res=await fetch('https://demo.wiregrid.fr/api/demo-request',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(body),
+    });
+    if(!res.ok){
+      const data=await res.json().catch(()=>({}));
+      const msg=data.errors?Object.values(data.errors).flat().join(', '):'Something went wrong. Please try again.';
+      throw new Error(msg);
+    }
+    document.getElementById('demoForm').classList.add('hide');
+    document.getElementById('demoSuccess').classList.add('show');
+  }catch(ex){
+    err.textContent=ex.message;
+    btn.disabled=false;btn.textContent='Get started';
+  }
+}
+</script>
+</body>
+</html>
