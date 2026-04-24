@@ -70,13 +70,6 @@
   "tech": {
     "title": "Technologies sous-jacentes"
   },
-  "waitlist": {
-    "title": "Recevoir les prochaines informations",
-    "desc": "Actualités produit, mises à jour et invitations aux phases de test anticipé.",
-    "placeholder": "Adresse email professionnelle",
-    "cta": "S'inscrire",
-    "success": "Inscription confirmée."
-  },
   "footer": {
     "product": "Produit",
     "resources": "Ressources",

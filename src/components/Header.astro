@@ -24,7 +24,7 @@ const alternateUrl = getAlternateUrl(Astro.url, alternateLang);
       <a href={alternateUrl} class="text-muted hover:text-text transition-colors uppercase font-mono text-xs border border-border px-2 py-1 rounded-sm">
         {alternateLang}
       </a>
-      <a href="http://localhost:8000" target="_blank" rel="noopener" class="btn btn-primary">
+      <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary">
         {t(lang, 'nav.demo')}
       </a>
     </nav>
@@ -42,7 +42,7 @@ const alternateUrl = getAlternateUrl(Astro.url, alternateLang);
     <a href={`/${lang}/#features`} class="text-muted hover:text-text">{t(lang, 'nav.features')}</a>
     <a href={`/${lang}/#pricing`} class="text-muted hover:text-text">{t(lang, 'nav.pricing')}</a>
     <a href={alternateUrl} class="text-muted hover:text-text uppercase font-mono text-xs">{alternateLang}</a>
-    <a href="http://localhost:8000" target="_blank" rel="noopener" class="btn btn-primary text-center">
+    <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary text-center">
       {t(lang, 'nav.demo')}
     </a>
   </nav>

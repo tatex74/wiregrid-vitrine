@@ -1,43 +1,43 @@
-# Astro Starter Kit: Minimal
+# WireGrid — Vitrine
+
+Landing page for WireGrid ([demo.wiregrid.fr](https://demo.wiregrid.fr)), served from [wiregrid.fr](https://wiregrid.fr).
+
+Built with [Astro 6](https://astro.build/), served as static assets by a [Cloudflare Worker](https://developers.cloudflare.com/workers/).
+
+The form on the landing page posts to the Laravel app at `https://demo.wiregrid.fr/api/demo-request` to provision a demo project (handled by the [wiregrid](https://github.com/tatex74/wiregrid) repo).
+
+## Branches
+
+| Branch | Role |
+|--------|------|
+| `master` | Prod — what is deployed on Cloudflare |
+| `dev` | Integration — features accumulate here before being promoted to master |
+
+## Dev
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev       # → http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Build & Deploy
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npm run build     # outputs to ./dist
+npx wrangler deploy
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+`wrangler.jsonc` points Cloudflare at `./dist` for static assets.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Structure
 
-Any static assets, like images, can be placed in the `public/` directory.
+```
+src/
+├── pages/          # routes (en/, fr/, apex)
+├── components/     # Astro components (Hero, Features, Pricing, …)
+├── layouts/Base.astro
+├── i18n/           # en.json + fr.json + helper
+└── styles/global.css
+```
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+i18n : all user-facing strings live in `src/i18n/{en,fr}.json`, accessed via `t(lang, 'key')`. Default lang is `fr`.

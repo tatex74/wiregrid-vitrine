@@ -70,13 +70,6 @@
   "tech": {
     "title": "Underlying technologies"
   },
-  "waitlist": {
-    "title": "Receive upcoming information",
-    "desc": "Product news, updates and invitations to early testing phases.",
-    "placeholder": "Professional email address",
-    "cta": "Subscribe",
-    "success": "Subscription confirmed."
-  },
   "footer": {
     "product": "Product",
     "resources": "Resources",
