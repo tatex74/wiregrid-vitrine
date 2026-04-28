@@ -10,7 +10,9 @@
     "title": "La supervision industrielle accessible à toutes les entreprises.",
     "subtitle": "Wiregrid centralise les données de vos automates, capteurs et compteurs dans une base ouverte, exploitable immédiatement dans Power BI, Grafana ou Excel.",
     "cta_demo": "Accéder à la démo",
-    "cta_download": "Télécharger gratuitement"
+    "cta_download": "Télécharger gratuitement",
+    "eyebrow": "Plateforme de supervision industrielle",
+    "screenshot_caption": "Aperçu de l'interface — disponible prochainement"
   },
   "values": {
     "title": "Une approche différente de la supervision",
@@ -76,6 +78,16 @@
     "documentation": "Documentation",
     "contact": "Contact",
     "rights": "Tous droits réservés.",
-    "made_in": "Conçu et développé en France"
+    "made_in": "Conçu et développé en France",
+    "tagline": "Centralisation et exploitation des données industrielles. Supervision, archivage, intégration BI."
+  },
+  "meta": {
+    "og_image_alt": "WireGrid — Plateforme de supervision industrielle"
+  },
+  "a11y": {
+    "skip_to_content": "Aller au contenu",
+    "open_menu": "Ouvrir le menu",
+    "close_menu": "Fermer le menu",
+    "switch_language": "Basculer en {lang}"
   }
 }

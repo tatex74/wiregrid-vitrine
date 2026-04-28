@@ -18,11 +18,7 @@ const { lang } = Astro.props;
           <Logo class="w-5 h-5" />
           <span class="font-semibold tracking-tight text-text">wiregrid</span>
         </a>
-        <p class="text-muted text-sm max-w-sm">
-          {lang === 'fr'
-            ? 'Centralisation et exploitation des données industrielles. Supervision, archivage, intégration BI.'
-            : 'Industrial data centralization and operation. Supervision, archiving, BI integration.'}
-        </p>
+        <p class="text-muted text-sm max-w-sm">{t(lang, 'footer.tagline')}</p>
       </div>
 
       <!-- Product -->

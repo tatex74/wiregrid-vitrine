@@ -2,34 +2,90 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import type { Lang } from '../i18n';
+import { t, type Lang } from '../i18n';
 
 interface Props {
   title: string;
   description: string;
   lang: Lang;
+  /** Optional OG image override (path absolute from site root). Defaults to /og-image.svg. */
+  ogImage?: string;
 }
 
-const { title, description, lang } = Astro.props;
-const alternateLang = lang === 'fr' ? 'en' : 'fr';
+const { title, description, lang, ogImage = '/og-image.svg' } = Astro.props;
+
+const SITE_ORIGIN = 'https://wiregrid.fr';
+const alternateLang: Lang = lang === 'fr' ? 'en' : 'fr';
 const currentPath = Astro.url.pathname;
-const alternatePath = currentPath.replace(`/${lang}/`, `/${alternateLang}/`).replace(`/${lang}`, `/${alternateLang}`) || `/${alternateLang}/`;
+const alternatePath =
+  currentPath.replace(`/${lang}/`, `/${alternateLang}/`).replace(`/${lang}`, `/${alternateLang}`) ||
+  `/${alternateLang}/`;
+const canonicalUrl = `${SITE_ORIGIN}${currentPath}`;
+const alternateUrl = `${SITE_ORIGIN}${alternatePath}`;
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE_ORIGIN}${ogImage}`;
+
+// Open Graph locale: BCP 47 language tag mapped to OG locale format.
+const ogLocale = lang === 'fr' ? 'fr_FR' : 'en_US';
+const ogLocaleAlternate = alternateLang === 'fr' ? 'fr_FR' : 'en_US';
 ---
 
 <!DOCTYPE html>
 <html lang={lang} class="dark">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
+
     <title>{title}</title>
-    <link rel="alternate" hreflang={alternateLang} href={alternatePath} />
-    <link rel="canonical" href={currentPath} />
+    <meta name="description" content={description} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#0F172A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#06B6D4" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Canonical + alternates -->
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+    <link rel="alternate" hreflang={alternateLang} href={alternateUrl} />
+    <link rel="alternate" hreflang="x-default" href={`${SITE_ORIGIN}/`} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WireGrid" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t(lang, 'meta.og_image_alt')} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlternate} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Robots: index + follow + max-image-preview large for richer SERP cards -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
   </head>
   <body class="bg-bg text-text antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-3 focus:py-2 focus:rounded-sm focus:bg-brand focus:text-bg focus:font-medium focus:outline-2 focus:outline-offset-2 focus:outline-brand"
+    >
+      {t(lang, 'a11y.skip_to_content')}
+    </a>
     <Header lang={lang} />
-    <main>
+    <main id="main-content">
       <slot />
     </main>
     <Footer lang={lang} />

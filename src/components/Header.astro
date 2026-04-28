@@ -7,21 +7,33 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const alternateLang = lang === 'fr' ? 'en' : 'fr';
+const alternateLang: Lang = lang === 'fr' ? 'en' : 'fr';
+const alternateLangLabel = alternateLang === 'fr' ? 'Français' : 'English';
 const alternateUrl = getAlternateUrl(Astro.url, alternateLang);
+const switchLanguageLabel = t(lang, 'a11y.switch_language').replace('{lang}', alternateLangLabel);
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-bg/90 backdrop-blur-sm">
   <div class="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-    <a href={`/${lang}/`} class="flex items-center gap-2 text-brand hover:text-brand-hover transition-colors">
+    <a
+      href={`/${lang}/`}
+      class="flex items-center gap-2 text-brand hover:text-brand-hover transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand rounded-sm"
+      aria-label="WireGrid — accueil"
+    >
       <Logo class="w-6 h-6" />
       <span class="font-semibold text-lg tracking-tight text-text">wiregrid</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm">
-      <a href={`/${lang}/#features`} class="text-muted hover:text-text transition-colors">{t(lang, 'nav.features')}</a>
-      <a href={`/${lang}/#pricing`} class="text-muted hover:text-text transition-colors">{t(lang, 'nav.pricing')}</a>
-      <a href={alternateUrl} class="text-muted hover:text-text transition-colors uppercase font-mono text-xs border border-border px-2 py-1 rounded-sm">
+    <nav class="hidden md:flex items-center gap-8 text-sm" aria-label="Primary">
+      <a href={`/${lang}/#features`} class="nav-link">{t(lang, 'nav.features')}</a>
+      <a href={`/${lang}/#pricing`} class="nav-link">{t(lang, 'nav.pricing')}</a>
+      <a
+        href={alternateUrl}
+        hreflang={alternateLang}
+        lang={alternateLang}
+        aria-label={switchLanguageLabel}
+        class="text-muted hover:text-text transition-colors uppercase font-mono text-xs border border-border px-2 py-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      >
         {alternateLang}
       </a>
       <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary">
@@ -29,27 +41,55 @@ const alternateUrl = getAlternateUrl(Astro.url, alternateLang);
       </a>
     </nav>
 
-    <!-- Mobile menu button -->
-    <button id="mobile-menu-btn" class="md:hidden text-muted hover:text-text" aria-label="Menu">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <button
+      id="mobile-menu-btn"
+      type="button"
+      class="md:hidden text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand rounded-sm"
+      aria-label={t(lang, 'a11y.open_menu')}
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
   </div>
 
-  <!-- Mobile menu -->
-  <nav id="mobile-menu" class="hidden md:hidden border-t border-border px-6 py-4 flex flex-col gap-4 text-sm bg-bg">
-    <a href={`/${lang}/#features`} class="text-muted hover:text-text">{t(lang, 'nav.features')}</a>
-    <a href={`/${lang}/#pricing`} class="text-muted hover:text-text">{t(lang, 'nav.pricing')}</a>
-    <a href={alternateUrl} class="text-muted hover:text-text uppercase font-mono text-xs">{alternateLang}</a>
+  <nav
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-border px-6 py-4 flex-col gap-4 text-sm bg-bg"
+    aria-label="Mobile primary"
+  >
+    <a href={`/${lang}/#features`} class="nav-link">{t(lang, 'nav.features')}</a>
+    <a href={`/${lang}/#pricing`} class="nav-link">{t(lang, 'nav.pricing')}</a>
+    <a
+      href={alternateUrl}
+      hreflang={alternateLang}
+      lang={alternateLang}
+      aria-label={switchLanguageLabel}
+      class="text-muted hover:text-text uppercase font-mono text-xs"
+    >
+      {alternateLang}
+    </a>
     <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary text-center">
       {t(lang, 'nav.demo')}
     </a>
   </nav>
 </header>
 
-<script>
+<script is:inline define:vars={{ openLabel: t(lang, 'a11y.open_menu'), closeLabel: t(lang, 'a11y.close_menu') }}>
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
-  btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+  if (btn && menu) {
+    const setOpen = (open) => {
+      menu.classList.toggle('hidden', !open);
+      menu.classList.toggle('flex', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? closeLabel : openLabel);
+    };
+    btn.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) setOpen(false);
+    });
+  }
 </script>

@@ -1,0 +1,17 @@
+{
+  "name": "WireGrid",
+  "short_name": "WireGrid",
+  "description": "Industrial supervision platform — open data, no tag-pricing",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0F172A",
+  "theme_color": "#06B6D4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

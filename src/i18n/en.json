@@ -10,7 +10,9 @@
     "title": "Industrial supervision accessible to every company.",
     "subtitle": "Wiregrid centralizes data from PLCs, sensors and meters into an open database, immediately usable in Power BI, Grafana or Excel.",
     "cta_demo": "Access the demo",
-    "cta_download": "Download for free"
+    "cta_download": "Download for free",
+    "eyebrow": "Industrial supervision platform",
+    "screenshot_caption": "Interface preview — coming soon"
   },
   "values": {
     "title": "A different approach to supervision",
@@ -76,6 +78,16 @@
     "documentation": "Documentation",
     "contact": "Contact",
     "rights": "All rights reserved.",
-    "made_in": "Designed and built in France"
+    "made_in": "Designed and built in France",
+    "tagline": "Industrial data centralization and operation. Supervision, archiving, BI integration."
+  },
+  "meta": {
+    "og_image_alt": "WireGrid — Industrial supervision platform"
+  },
+  "a11y": {
+    "skip_to_content": "Skip to content",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "switch_language": "Switch to {lang}"
   }
 }

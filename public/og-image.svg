@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(80 80)" stroke="#334155" stroke-width="1" fill="none" opacity="0.4">
+    <line x1="0" y1="0" x2="0" y2="470"/>
+    <line x1="170" y1="0" x2="170" y2="470"/>
+    <line x1="340" y1="0" x2="340" y2="470"/>
+    <line x1="510" y1="0" x2="510" y2="470"/>
+    <line x1="680" y1="0" x2="680" y2="470"/>
+    <line x1="850" y1="0" x2="850" y2="470"/>
+    <line x1="1020" y1="0" x2="1020" y2="470"/>
+    <line x1="0" y1="0" x2="1040" y2="0"/>
+    <line x1="0" y1="118" x2="1040" y2="118"/>
+    <line x1="0" y1="235" x2="1040" y2="235"/>
+    <line x1="0" y1="353" x2="1040" y2="353"/>
+    <line x1="0" y1="470" x2="1040" y2="470"/>
+  </g>
+  <g transform="translate(80 200)">
+    <g transform="translate(0 -8)">
+      <rect x="0" y="0" width="48" height="48" rx="6" fill="url(#brand)"/>
+      <path d="M12 18 L18 30 L24 14 L30 30 L36 18" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="64" y="32" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="34" fill="#F8FAFC" letter-spacing="-0.5">wiregrid</text>
+  </g>
+  <text x="80" y="320" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="64" fill="#F8FAFC" letter-spacing="-1.5">
+    <tspan x="80" dy="0">Industrial supervision</tspan>
+    <tspan x="80" dy="80">that just works.</tspan>
+  </text>
+  <text x="80" y="500" font-family="Inter, system-ui, sans-serif" font-weight="400" font-size="24" fill="#94A3B8">
+    <tspan x="80" dy="0">Open data — Power BI, Grafana, Excel.</tspan>
+    <tspan x="80" dy="36">No tag-pricing. Free tier.</tspan>
+  </text>
+  <g transform="translate(960 480)" font-family="JetBrains Mono, ui-monospace, monospace" font-size="16" fill="#06B6D4">
+    <text x="0" y="0">wiregrid.fr</text>
+  </g>
+</svg>
