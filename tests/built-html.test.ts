@@ -45,8 +45,11 @@ describe('Built pages exist and have a <title>', () => {
 
 describe('No prod-breaking hardcoded URLs', () => {
   for (const lang of ['fr', 'en'] as const) {
-    it(`${lang} has no http://localhost references`, () => {
-      expect(html[lang]).not.toMatch(/http:\/\/localhost/);
+    it(`${lang} has no http://localhost LINKS (terminal mocks are allowed)`, () => {
+      // Block real <a href> / <img src> pointing at localhost; allow it
+      // in code / pre blocks (terminal mocks where it's the user's own
+      // self-hosted URL after `docker compose up`).
+      expect(html[lang]).not.toMatch(/(href|src)=["']http:\/\/localhost/);
     });
 
     it(`${lang} has no bruno.crespo74 personal email`, () => {

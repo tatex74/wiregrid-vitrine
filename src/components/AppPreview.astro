@@ -3,94 +3,101 @@ import { t, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
+  compact?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, compact = false } = Astro.props;
 
-// Realistic snapshot mirroring what the demo serves at demo.wiregrid.fr.
-// Numbers come from the seed (apps/gateway-py/scripts/seed.py + fleet.seed.json).
 const points = [
-  { path: 'AHU1/SupplyTemp', value: '22.4', unit: '°C', age: '0.4 s', trend: 'flat' },
-  { path: 'AHU1/ReturnTemp', value: '24.1', unit: '°C', age: '0.4 s', trend: 'up' },
-  { path: 'AHU1/FanSpeed', value: '78', unit: '%', age: '0.4 s', trend: 'flat' },
-  { path: 'Meter1/Power', value: '124.7', unit: 'kW', age: '0.2 s', trend: 'up', accent: true },
-  { path: 'Plant1/Tank1/Level', value: '62.3', unit: '%', age: '0.6 s', trend: 'down' },
-  { path: 'Boiler1/FlueTemp', value: '247', unit: '°C', age: '0.4 s', trend: 'flat' },
-  { path: 'Chiller1/SupplyTemp', value: '6.8', unit: '°C', age: '0.3 s', trend: 'flat' },
+  { id: 'ahu1_st',     path: 'AHU1/SupplyTemp',     unit: '°C', dyn: 'sine', base: 22.4, amp: 1.8, period: 11 },
+  { id: 'ahu1_rt',     path: 'AHU1/ReturnTemp',     unit: '°C', dyn: 'sine', base: 24.1, amp: 1.4, period: 13 },
+  { id: 'ahu1_fs',     path: 'AHU1/FanSpeed',       unit: '%',  dyn: 'walk', base: 78,   amp: 4,   period: 3 },
+  { id: 'meter1_p',    path: 'Meter1/Power',        unit: 'kW', dyn: 'walk', base: 124.7, amp: 8,  period: 2, accent: true },
+  { id: 'plant1_lv',   path: 'Plant1/Tank1/Level',  unit: '%',  dyn: 'sine', base: 62.3, amp: 6,   period: 17 },
+  { id: 'boiler1_ft',  path: 'Boiler1/FlueTemp',    unit: '°C', dyn: 'sine', base: 247,  amp: 12,  period: 19 },
+  { id: 'chiller1_st', path: 'Chiller1/SupplyTemp', unit: '°C', dyn: 'walk', base: 6.8,  amp: 0.4, period: 4 },
 ];
-
-const sparklinePath = 'M0,18 L8,16 L16,17 L24,12 L32,14 L40,10 L48,11 L56,7 L64,9 L72,5 L80,7';
 ---
 
-<!-- Decorative product mockup. role=img with explicit alt; the live data below
-     is illustrative (no real WebSocket here — that would require a backend). -->
 <figure
-  class="not-prose mx-auto max-w-5xl rounded-md border border-border overflow-hidden shadow-2xl shadow-brand/10 bg-bg"
+  id="app-preview"
+  class={`relative rounded-md border border-border bg-bg overflow-hidden ${compact ? '' : 'mx-auto max-w-5xl'}`}
   role="img"
   aria-label={t(lang, 'app_preview.aria_label')}
 >
-  <!-- Window chrome -->
-  <div class="bg-surface-hi px-4 py-2.5 border-b border-border flex items-center gap-2">
-    <div class="flex gap-1.5" aria-hidden="true">
-      <span class="w-2.5 h-2.5 rounded-full bg-error/60"></span>
-      <span class="w-2.5 h-2.5 rounded-full bg-warning/60"></span>
-      <span class="w-2.5 h-2.5 rounded-full bg-success/60"></span>
+  <div class="bg-surface-hi/80 px-3 py-2 border-b border-border flex items-center gap-2">
+    <div class="flex gap-1" aria-hidden="true">
+      <span class="w-2 h-2 rounded-full bg-error/60"></span>
+      <span class="w-2 h-2 rounded-full bg-warning/60"></span>
+      <span class="w-2 h-2 rounded-full bg-success/60"></span>
     </div>
-    <span class="text-xs text-muted font-mono ml-2">demo.wiregrid.fr — supervision</span>
-    <span class="ml-auto flex items-center gap-1.5 text-[11px] font-mono text-success">
+    <span class="text-[11px] text-muted font-mono ml-2">demo.wiregrid.fr</span>
+    <span class="ml-auto flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-brand">
       <span class="relative flex h-1.5 w-1.5">
-        <span class="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 ws-pulse"></span>
-        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-success"></span>
+        <span class="absolute inline-flex h-full w-full rounded-full bg-brand opacity-75 ws-pulse" aria-hidden="true"></span>
+        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand"></span>
       </span>
       live · ws
     </span>
   </div>
 
-  <div class="grid grid-cols-[180px_1fr] min-h-[420px]">
-    <!-- Sidebar -->
-    <aside class="border-r border-border bg-surface px-3 py-4 flex flex-col gap-1 text-[12px]">
-      <div class="text-[10px] uppercase tracking-wider text-muted px-2 mb-2">{t(lang, 'app_preview.nav.section')}</div>
-      <a class="px-2 py-1.5 rounded-sm text-muted">{t(lang, 'app_preview.nav.overview')}</a>
-      <a class="px-2 py-1.5 rounded-sm text-muted">{t(lang, 'app_preview.nav.drivers')} <span class="text-[10px] ml-1 opacity-60">10</span></a>
-      <a class="px-2 py-1.5 rounded-sm text-muted">{t(lang, 'app_preview.nav.machines')} <span class="text-[10px] ml-1 opacity-60">13</span></a>
-      <a class="px-2 py-1.5 rounded-sm bg-brand/10 text-brand font-medium">{t(lang, 'app_preview.nav.live')} <span class="text-[10px] ml-1 opacity-60">52</span></a>
-      <a class="px-2 py-1.5 rounded-sm text-muted">{t(lang, 'app_preview.nav.alarms')} <span class="text-[10px] ml-1 opacity-60 text-warning">3</span></a>
-      <a class="px-2 py-1.5 rounded-sm text-muted">{t(lang, 'app_preview.nav.revisions')}</a>
-      <div class="mt-auto px-2 py-2 border-t border-border text-[10px] text-muted">
+  <div class="grid grid-cols-[160px_1fr] min-h-[380px]">
+    <aside class="border-r border-border bg-surface px-2.5 py-3 flex flex-col gap-0.5 text-[12px]">
+      <div class="text-[9px] uppercase tracking-[0.12em] text-muted px-2 mb-2 font-mono">{t(lang, 'app_preview.nav.section')}</div>
+      <a class="px-2 py-1 rounded-sm text-muted">{t(lang, 'app_preview.nav.overview')}</a>
+      <a class="px-2 py-1 rounded-sm text-muted flex items-center justify-between">
+        <span>{t(lang, 'app_preview.nav.drivers')}</span>
+        <span class="text-[10px] font-mono opacity-60">10</span>
+      </a>
+      <a class="px-2 py-1 rounded-sm text-muted flex items-center justify-between">
+        <span>{t(lang, 'app_preview.nav.machines')}</span>
+        <span class="text-[10px] font-mono opacity-60">13</span>
+      </a>
+      <a class="px-2 py-1 rounded-sm bg-brand/10 text-brand font-medium flex items-center justify-between">
+        <span>{t(lang, 'app_preview.nav.live')}</span>
+        <span class="text-[10px] font-mono opacity-80">52</span>
+      </a>
+      <a class="px-2 py-1 rounded-sm text-muted flex items-center justify-between">
+        <span>{t(lang, 'app_preview.nav.alarms')}</span>
+        <span class="text-[10px] font-mono text-warning/80">3</span>
+      </a>
+      <a class="px-2 py-1 rounded-sm text-muted">{t(lang, 'app_preview.nav.revisions')}</a>
+
+      <div class="mt-auto pt-3 px-1.5 border-t border-border text-[10px] font-mono text-muted">
         <div class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-          {t(lang, 'app_preview.deployed_rev')} <span class="font-mono text-brand">#42</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+          <span>{t(lang, 'app_preview.deployed_rev')}</span>
+          <span class="text-brand">#42</span>
         </div>
       </div>
     </aside>
 
-    <!-- Main pane: live points table -->
-    <div class="px-5 py-4 overflow-hidden">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-[13px] font-semibold">{t(lang, 'app_preview.title')}</h3>
-        <span class="text-[10px] font-mono text-muted">{t(lang, 'app_preview.last_update')}</span>
+    <div class="px-4 py-3 overflow-hidden">
+      <div class="flex items-center justify-between mb-2.5">
+        <h3 class="text-[12px] font-semibold tracking-tight">{t(lang, 'app_preview.title')}</h3>
+        <span class="text-[10px] font-mono text-muted" id="ap-status">↻ 0.4s</span>
       </div>
 
       <table class="w-full text-[12px] font-mono border-collapse">
         <thead>
-          <tr class="text-[10px] text-muted uppercase tracking-wider border-b border-border">
-            <th class="text-left py-1.5 pr-3">{t(lang, 'app_preview.col.path')}</th>
-            <th class="text-right py-1.5 px-3">{t(lang, 'app_preview.col.value')}</th>
-            <th class="text-left py-1.5 px-3">{t(lang, 'app_preview.col.unit')}</th>
-            <th class="text-left py-1.5 px-3 hidden sm:table-cell">{t(lang, 'app_preview.col.age')}</th>
-            <th class="text-center py-1.5 pl-3">{t(lang, 'app_preview.col.trend')}</th>
+          <tr class="text-[9px] text-muted uppercase tracking-wider border-b border-border">
+            <th class="text-left py-1.5 pr-3 font-medium">{t(lang, 'app_preview.col.path')}</th>
+            <th class="text-right py-1.5 px-3 font-medium">{t(lang, 'app_preview.col.value')}</th>
+            <th class="text-left py-1.5 px-2 font-medium">{t(lang, 'app_preview.col.unit')}</th>
+            <th class="text-center py-1.5 pl-3 font-medium hidden sm:table-cell">{t(lang, 'app_preview.col.trend')}</th>
           </tr>
         </thead>
         <tbody>
           {points.map((p) => (
-            <tr class="border-b border-border/50 last:border-0">
-              <td class="py-2 pr-3 truncate text-muted-strong">{p.path}</td>
-              <td class={`py-2 px-3 text-right font-medium ${p.accent ? 'text-brand val-pulse' : 'text-text'}`}>{p.value}</td>
-              <td class="py-2 px-3 text-muted">{p.unit}</td>
-              <td class="py-2 px-3 text-muted hidden sm:table-cell">{p.age}</td>
-              <td class="py-2 pl-3 text-center">
-                <svg class="inline-block w-16 h-5 text-brand/70" viewBox="0 0 80 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                  <path d={sparklinePath} stroke-linecap="round" stroke-linejoin="round" />
+            <tr class="border-b border-border/50 last:border-0" data-point={p.id}>
+              <td class="py-1.5 pr-3 truncate text-muted-strong">{p.path}</td>
+              <td class={`py-1.5 px-3 text-right tabular-nums ${p.accent ? 'text-brand font-semibold' : 'text-text'}`}>
+                <span class="ap-val">{p.base.toFixed(p.unit === '%' ? 0 : 1)}</span>
+              </td>
+              <td class="py-1.5 px-2 text-muted text-[11px]">{p.unit}</td>
+              <td class="py-1.5 pl-3 hidden sm:table-cell">
+                <svg class="ap-spark mx-auto block w-20 h-4 text-brand/70" viewBox="0 0 80 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                  <polyline class="ap-spark-line" points="" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </td>
             </tr>
@@ -102,23 +109,79 @@ const sparklinePath = 'M0,18 L8,16 L16,17 L24,12 L32,14 L40,10 L48,11 L56,7 L64,
 </figure>
 
 <style>
-  /* Subtle live indicator — disabled under prefers-reduced-motion. */
   @keyframes ws-ping {
-    0%   { transform: scale(1);   opacity: 0.75; }
-    75%, 100% { transform: scale(2.2); opacity: 0; }
+    0% { transform: scale(1); opacity: 0.75; }
+    75%, 100% { transform: scale(2.4); opacity: 0; }
   }
-  .ws-pulse {
-    animation: ws-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-  /* Single value flashes to suggest a fresh WebSocket update. */
-  @keyframes val-flash {
-    0%, 100% { color: var(--color-brand); }
-    20%      { color: var(--color-brand-hover); }
-  }
-  .val-pulse {
-    animation: val-flash 2.4s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ws-pulse, .val-pulse { animation: none; }
-  }
+  .ws-pulse { animation: ws-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  @media (prefers-reduced-motion: reduce) { .ws-pulse { animation: none; } }
 </style>
+
+<script is:inline type="module" define:vars={{ pointsConfig: points }}>
+  const figure = document.getElementById('app-preview');
+  if (figure) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced) {
+      const buffers = new Map();
+      const minMax = new Map();
+      pointsConfig.forEach((p) => {
+        buffers.set(p.id, Array(24).fill(p.base));
+        minMax.set(p.id, { min: p.base - p.amp, max: p.base + p.amp });
+      });
+
+      const status = figure.querySelector('#ap-status');
+      const t0 = performance.now();
+      let lastUpdate = t0;
+
+      const computeValue = (p, tSec) => {
+        const buf = buffers.get(p.id);
+        const last = buf[buf.length - 1];
+        if (p.dyn === 'sine') {
+          return p.base + p.amp * Math.sin((tSec * 2 * Math.PI) / p.period);
+        }
+        const drift = (Math.random() - 0.5) * p.amp * 0.18;
+        const pull = (p.base - last) * 0.05;
+        return last + drift + pull;
+      };
+
+      const render = (now) => {
+        const tSec = (now - t0) / 1000;
+        const since = ((now - lastUpdate) / 1000).toFixed(1);
+        if (status) status.textContent = `↻ ${since}s`;
+
+        if (now - lastUpdate < 280) {
+          requestAnimationFrame(render);
+          return;
+        }
+        lastUpdate = now;
+
+        for (const p of pointsConfig) {
+          const row = figure.querySelector(`tr[data-point="${p.id}"]`);
+          if (!row) continue;
+          const val = computeValue(p, tSec);
+          const buf = buffers.get(p.id);
+          buf.shift();
+          buf.push(val);
+          const valEl = row.querySelector('.ap-val');
+          if (valEl) {
+            valEl.textContent = val.toFixed(1);
+          }
+          const line = row.querySelector('.ap-spark-line');
+          if (line) {
+            const mm = minMax.get(p.id);
+            const range = mm.max - mm.min || 1;
+            const pts = buf.map((v, i) => {
+              const x = (i / (buf.length - 1)) * 80;
+              const y = 14 - ((v - mm.min) / range) * 12;
+              return `${x.toFixed(1)},${y.toFixed(1)}`;
+            }).join(' ');
+            line.setAttribute('points', pts);
+          }
+        }
+        requestAnimationFrame(render);
+      };
+
+      requestAnimationFrame(render);
+    }
+  }
+</script>

@@ -7,70 +7,139 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Each feature lists what's actually shipped (vs roadmap). Status:
-//   'live'    — works in the demo at demo.wiregrid.fr today
-//   'roadmap' — planned, public ETA in copy
-const features = [
-  { id: 'drivers', icon: 'protocol', status: 'live' },
-  { id: 'live', icon: 'pulse', status: 'live' },
-  { id: 'historian', icon: 'chart', status: 'live' },
-  { id: 'alarms', icon: 'bell', status: 'live' },
-  { id: 'revisions', icon: 'git', status: 'live' },
-  { id: 'integrations', icon: 'database', status: 'live' },
-  { id: 'multitenant', icon: 'shield', status: 'live' },
-  { id: 'wiresheet', icon: 'flow', status: 'roadmap' },
+const wsFrame = `<span class="text-muted">// GET wss://demo.wiregrid.fr/ws/live</span>
+{<span class="text-brand">"point_id"</span>: 124, <span class="text-brand">"path"</span>: <span class="text-warning">"AHU1/SupplyTemp"</span>, <span class="text-brand">"value"</span>: 22.41, <span class="text-brand">"quality"</span>: <span class="text-warning">"good"</span>, <span class="text-brand">"ts"</span>: <span class="text-warning">"2026-04-28T13:42:18.142Z"</span>}
+{<span class="text-brand">"point_id"</span>: 124, <span class="text-brand">"path"</span>: <span class="text-warning">"AHU1/SupplyTemp"</span>, <span class="text-brand">"value"</span>: 22.43, <span class="text-brand">"quality"</span>: <span class="text-warning">"good"</span>, <span class="text-brand">"ts"</span>: <span class="text-warning">"2026-04-28T13:42:18.391Z"</span>}`;
+
+const hypertable = `<span class="text-brand">CREATE TABLE</span> point_history (
+  ts        <span class="text-warning">TIMESTAMPTZ</span> <span class="text-brand">NOT NULL</span>,
+  point_id  <span class="text-warning">BIGINT</span>      <span class="text-brand">NOT NULL</span>,
+  value     <span class="text-warning">DOUBLE PRECISION</span> <span class="text-brand">NOT NULL</span>,
+  quality   <span class="text-warning">TEXT</span>        <span class="text-brand">NOT NULL DEFAULT</span> <span class="text-warning">'good'</span>
+);
+<span class="text-brand">SELECT</span> create_hypertable(<span class="text-warning">'point_history'</span>, by_range(<span class="text-warning">'ts'</span>));`;
+
+const revisionsLog = `<span class="text-brand">#43</span>  <span class="text-text">AHU1: setpoint 21 → 22 °C</span>      <span class="text-muted">bcrespo · 14:02 · deployed</span>
+<span class="text-brand">#42</span>  <span class="text-text">+ alarm: Boiler1/FlueTemp &gt; 280</span>  <span class="text-muted">bcrespo · 11:48 · deployed</span>
+<span class="text-brand">#41</span>  <span class="text-text">Tank1: deadband 0.1 → 0.2 %</span>     <span class="text-muted">jdupont · 10:13 · revert</span>
+<span class="text-brand">#40</span>  <span class="text-text">+ machine: Pompe Recirculation P1</span>  <span class="text-muted">bcrespo · 09:55</span>`;
+
+const endpoints = `<span class="text-brand">GET </span>  /py/v1/drivers           <span class="text-muted">  list + filter, JSON envelope</span>
+<span class="text-brand">GET </span>  /py/v1/points/live       <span class="text-muted">  snapshot of every live tag</span>
+<span class="text-brand">POST</span>  /py/v1/points/{id}/write <span class="text-muted">  write a setpoint (RBAC-checked)</span>
+<span class="text-brand">GET </span>  /api/v1/*                <span class="text-muted">  alias for legacy integrations</span>
+<span class="text-brand">WS  </span>  /ws/live                 <span class="text-muted">  Redis pub/sub forwarder, &lt;5 ms</span>
+<span class="text-brand">SQL </span>  postgres://…:5432/wiregrid <span class="text-muted">  read-only role for BI tools</span>`;
+
+const alarmRows = [
+  { sev: 'warning', sevClass: 'text-warning', cond: 'AHU1/SupplyTemp > 23.5 °C', db: '1.0', delay: '0s', group: '—' },
+  { sev: 'critical', sevClass: 'text-error', cond: 'AHU1/SupplyTemp > 35.0 °C', db: '1.0', delay: '5s', group: 'Operations' },
+  { sev: 'warning', sevClass: 'text-warning', cond: 'Plant1/Tank1/Level < 38.0 %', db: '2.0', delay: '0s', group: '—' },
 ];
 ---
 
-<section id="features" class="px-6 py-20 border-t border-border">
-  <div class="mx-auto max-w-5xl">
-    <div class="max-w-2xl">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
-        {t(lang, 'features.title')}
-      </h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'features.subtitle')}</p>
+<section id="features" class="section">
+  <div class="mx-auto max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+      <div class="lg:col-span-5">
+        <div class="section-eyebrow">04 · Capacités livrées</div>
+        <h2 class="section-title">{t(lang, 'features.title')}</h2>
+      </div>
+      <p class="lg:col-span-7 section-lede mt-2 lg:mt-8">{t(lang, 'features.subtitle')}</p>
     </div>
 
-    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-      {features.map((f) => (
-        <article class="rounded-md border border-border bg-surface p-6">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-9 h-9 rounded-md bg-brand/10 text-brand flex items-center justify-center shrink-0">
-              {f.icon === 'protocol' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13" stroke-linecap="round"/><circle cx="3.5" cy="6" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="3.5" cy="18" r="1.5"/></svg>
-              )}
-              {f.icon === 'pulse' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12h4l3-9 4 18 3-9h4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              )}
-              {f.icon === 'chart' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3v18h18M7 14l4-4 4 4 5-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              )}
-              {f.icon === 'bell' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21a2 2 0 0 0 4 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              )}
-              {f.icon === 'git' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M6 8.5v7M8.5 6.5h2.5a3 3 0 0 1 3 3v2.5M8.5 17.5h2.5a3 3 0 0 0 3-3V12" stroke-linecap="round"/></svg>
-              )}
-              {f.icon === 'database' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="2.5"/><path d="M4 5v6c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5V5M4 11v6c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5v-6"/></svg>
-              )}
-              {f.icon === 'shield' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              )}
-              {f.icon === 'flow' && (
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="4" width="6" height="5" rx="1"/><rect x="2" y="15" width="6" height="5" rx="1"/><rect x="16" y="9.5" width="6" height="5" rx="1"/><path d="M8 6.5h4a2 2 0 0 1 2 2v3m-6 6h4a2 2 0 0 0 2-2v-3" stroke-linecap="round"/></svg>
-              )}
+    <div class="border border-border rounded-md divide-y divide-border bg-surface">
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.drivers.title')}</h3>
+        </div>
+        <p class="md:col-span-8 text-sm text-muted-strong leading-relaxed" set:html={t(lang, 'features.drivers.desc_html')} />
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.live.title')}</h3>
+        </div>
+        <div class="md:col-span-8">
+          <p class="text-sm text-muted-strong leading-relaxed mb-3" set:html={t(lang, 'features.live.desc_html')} />
+          <pre class="font-mono text-[11.5px] leading-relaxed bg-bg border border-border rounded-sm p-3 overflow-x-auto text-muted-strong"><Fragment set:html={wsFrame} /></pre>
+        </div>
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.historian.title')}</h3>
+        </div>
+        <div class="md:col-span-8">
+          <p class="text-sm text-muted-strong leading-relaxed mb-3" set:html={t(lang, 'features.historian.desc_html')} />
+          <pre class="font-mono text-[11.5px] leading-relaxed bg-bg border border-border rounded-sm p-3 overflow-x-auto text-muted-strong"><Fragment set:html={hypertable} /></pre>
+        </div>
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.alarms.title')}</h3>
+        </div>
+        <div class="md:col-span-8">
+          <p class="text-sm text-muted-strong leading-relaxed mb-3" set:html={t(lang, 'features.alarms.desc_html')} />
+          <div class="font-mono text-[11.5px] bg-bg border border-border rounded-sm overflow-hidden">
+            <div class="grid grid-cols-[78px_1fr_44px_44px_auto] gap-x-3 px-3 py-1.5 border-b border-border bg-surface-hi/50 text-[10px] uppercase tracking-wider text-muted">
+              <span>severity</span><span>condition</span><span>db</span><span>delay</span><span>group</span>
             </div>
-            <h3 class="font-semibold text-text">{t(lang, `features.${f.id}.title`)}</h3>
-            {f.status === 'roadmap' && (
-              <span class="ml-auto text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-sm border border-warning/40 text-warning bg-warning/5 shrink-0">
-                {t(lang, 'features.status.roadmap')}
-              </span>
-            )}
+            {alarmRows.map((r) => (
+              <div class="grid grid-cols-[78px_1fr_44px_44px_auto] gap-x-3 px-3 py-1 text-muted-strong">
+                <span class={r.sevClass}>{r.sev}</span>
+                <span>{r.cond}</span>
+                <span>{r.db}</span>
+                <span>{r.delay}</span>
+                <span>{r.group}</span>
+              </div>
+            ))}
           </div>
-          <p class="text-sm text-muted-strong leading-relaxed">{t(lang, `features.${f.id}.desc`)}</p>
-        </article>
-      ))}
+        </div>
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.revisions.title')}</h3>
+        </div>
+        <div class="md:col-span-8">
+          <p class="text-sm text-muted-strong leading-relaxed mb-3" set:html={t(lang, 'features.revisions.desc_html')} />
+          <pre class="font-mono text-[11.5px] leading-[1.7] bg-bg border border-border rounded-sm p-3 overflow-x-auto text-muted-strong"><Fragment set:html={revisionsLog} /></pre>
+        </div>
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.integrations.title')}</h3>
+        </div>
+        <div class="md:col-span-8">
+          <p class="text-sm text-muted-strong leading-relaxed mb-3" set:html={t(lang, 'features.integrations.desc_html')} />
+          <pre class="font-mono text-[11.5px] leading-[1.7] bg-bg border border-border rounded-sm p-3 overflow-x-auto text-muted-strong"><Fragment set:html={endpoints} /></pre>
+        </div>
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-brand uppercase tracking-wider">live</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.multitenant.title')}</h3>
+        </div>
+        <p class="md:col-span-8 text-sm text-muted-strong leading-relaxed" set:html={t(lang, 'features.multitenant.desc_html')} />
+      </article>
+
+      <article class="grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-5">
+        <div class="md:col-span-4 flex items-baseline gap-2.5">
+          <span class="text-[10px] font-mono text-warning uppercase tracking-wider">Q3 26</span>
+          <h3 class="font-semibold text-text">{t(lang, 'features.wiresheet.title')}</h3>
+        </div>
+        <p class="md:col-span-8 text-sm text-muted-strong leading-relaxed" set:html={t(lang, 'features.wiresheet.desc_html')} />
+      </article>
     </div>
   </div>
 </section>

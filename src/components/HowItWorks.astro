@@ -7,36 +7,163 @@ interface Props {
 
 const { lang } = Astro.props;
 
-const steps = [
-  { id: '1_install',   tag: 'docker compose up -d' },
-  { id: '2_configure', tag: 'Modbus · OPC-UA · BACnet' },
-  { id: '3_operate',   tag: 'Power BI · Grafana · Excel' },
-];
+const installLog = `<span class="text-brand">$</span> curl -O https://wiregrid.fr/docker-compose.yml
+<span class="text-brand">$</span> docker compose up -d
+<span class="text-muted">[+] Running 5/5</span>
+ <span class="text-success">✓</span> Container wiregrid-postgres   <span class="text-muted">Healthy   2.1s</span>
+ <span class="text-success">✓</span> Container wiregrid-redis      <span class="text-muted">Healthy   1.4s</span>
+ <span class="text-success">✓</span> Container wiregrid-gateway-py <span class="text-muted">Started   3.2s</span>
+ <span class="text-success">✓</span> Container wiregrid-simulator  <span class="text-muted">Started   1.6s</span>
+<span class="text-brand">$</span> docker compose --profile tools run --rm seed
+<span class="text-muted">drivers           10
+machines          13
+machine_points    60
+alarm_definitions 18</span>
+<span class="text-brand">$</span> open http://localhost:8001`;
+
+const sqlSnippet = `<span class="text-muted">-- Last 24 h average power per machine, ready for Power BI</span>
+<span class="text-brand">SELECT</span> m.name <span class="text-brand">AS</span> machine,
+       <span class="text-brand">time_bucket</span>(<span class="text-warning">'15 min'</span>, ph.ts) <span class="text-brand">AS</span> bucket,
+       <span class="text-brand">avg</span>(ph.value) <span class="text-brand">AS</span> avg_power
+<span class="text-brand">FROM</span>   point_history ph
+<span class="text-brand">JOIN</span>   machine_points mp <span class="text-brand">ON</span> mp.source_driver_point_id = ph.point_id
+<span class="text-brand">JOIN</span>   machines m       <span class="text-brand">ON</span> m.id = mp.machine_id
+<span class="text-brand">WHERE</span>  ph.ts <span class="text-brand">&gt;</span> <span class="text-brand">now</span>() <span class="text-brand">-</span> <span class="text-warning">interval '24 hours'</span>
+  <span class="text-brand">AND</span>  mp.unit = <span class="text-warning">'kW'</span>
+<span class="text-brand">GROUP BY</span> m.name, bucket
+<span class="text-brand">ORDER BY</span> bucket;`;
 ---
 
-<section class="py-20 px-6 bg-surface border-t border-border">
-  <div class="mx-auto max-w-5xl">
-    <div class="max-w-2xl mb-14">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">{t(lang, 'how.title')}</h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'how.subtitle')}</p>
+<section class="section">
+  <div class="mx-auto max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+      <div class="lg:col-span-5">
+        <div class="section-eyebrow">03 · Mise en service</div>
+        <h2 class="section-title">{t(lang, 'how.title')}</h2>
+      </div>
+      <p class="lg:col-span-7 section-lede mt-2 lg:mt-8">{t(lang, 'how.subtitle')}</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-      <div class="hidden md:block absolute top-6 left-[16.6%] right-[16.6%] h-px bg-border" aria-hidden="true"></div>
-
-      {steps.map((step, i) => (
-        <div class="relative">
-          <div
-            class="w-12 h-12 rounded-full bg-brand text-bg flex items-center justify-center text-xl font-semibold mb-5 relative z-10 ring-4 ring-surface"
-            aria-hidden="true"
-          >
-            {i + 1}
+    <div class="space-y-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div class="md:col-span-4">
+          <div class="flex items-baseline gap-3 mb-2">
+            <span class="font-mono text-brand text-sm">01</span>
+            <h3 class="text-xl font-semibold tracking-tight">{t(lang, 'how.1_install.title')}</h3>
           </div>
-          <h3 class="text-xl font-semibold mb-3">{t(lang, `how.${step.id}.title`)}</h3>
-          <p class="text-muted-strong leading-relaxed mb-3 text-sm">{t(lang, `how.${step.id}.desc`)}</p>
-          <span class="inline-block text-[11px] font-mono text-brand bg-brand/10 px-2.5 py-1 rounded-sm border border-brand/20">{step.tag}</span>
+          <p class="text-muted-strong text-sm leading-relaxed">{t(lang, 'how.1_install.desc')}</p>
         </div>
-      ))}
+        <div class="md:col-span-8">
+          <div class="rounded-md border border-border bg-bg overflow-hidden">
+            <div class="bg-surface-hi/80 px-3 py-1.5 border-b border-border flex items-center gap-2 text-[11px] font-mono text-muted">
+              <div class="flex gap-1">
+                <span class="w-2 h-2 rounded-full bg-error/60"></span>
+                <span class="w-2 h-2 rounded-full bg-warning/60"></span>
+                <span class="w-2 h-2 rounded-full bg-success/60"></span>
+              </div>
+              <span class="ml-2">bash — wiregrid@host</span>
+            </div>
+            <pre class="font-mono text-[12.5px] leading-[1.55] p-4 text-text whitespace-pre overflow-x-auto"><Fragment set:html={installLog} /></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div class="md:col-span-5">
+          <div class="rounded-md border border-border bg-surface p-5">
+            <div class="text-[10px] font-mono uppercase tracking-wider text-muted mb-4">project · default</div>
+            <svg viewBox="0 0 320 180" class="w-full h-auto" fill="none" stroke="currentColor" aria-hidden="true">
+              <g class="text-muted">
+                <rect x="6" y="6" width="60" height="22" rx="2" stroke-width="1" />
+                <rect x="76" y="6" width="60" height="22" rx="2" stroke-width="1" />
+                <rect x="146" y="6" width="60" height="22" rx="2" stroke-width="1" />
+                <rect x="216" y="6" width="60" height="22" rx="2" stroke-width="1" />
+              </g>
+              <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" fill="currentColor" class="text-muted-strong">
+                <text x="36" y="20" text-anchor="middle">AHU1</text>
+                <text x="106" y="20" text-anchor="middle">Meter1</text>
+                <text x="176" y="20" text-anchor="middle">Plant1</text>
+                <text x="246" y="20" text-anchor="middle">Boiler1</text>
+              </g>
+              <g class="text-brand-dim" stroke-width="1.25">
+                <path d="M36 28 L36 64 M106 28 L106 64 M176 28 L176 64 M246 28 L246 64" />
+                <path d="M36 64 L106 64 L176 64 L246 64" stroke-opacity="0.4" />
+              </g>
+              <g class="text-brand">
+                <rect x="6" y="64" width="60" height="22" rx="2" stroke-width="1.25" fill="rgb(52 211 153 / 0.06)" />
+                <rect x="76" y="64" width="60" height="22" rx="2" stroke-width="1.25" fill="rgb(52 211 153 / 0.06)" />
+                <rect x="146" y="64" width="60" height="22" rx="2" stroke-width="1.25" fill="rgb(52 211 153 / 0.06)" />
+                <rect x="216" y="64" width="60" height="22" rx="2" stroke-width="1.25" fill="rgb(52 211 153 / 0.06)" />
+              </g>
+              <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" fill="currentColor" class="text-text">
+                <text x="36" y="78" text-anchor="middle">CTA-A</text>
+                <text x="106" y="78" text-anchor="middle">Meter</text>
+                <text x="176" y="78" text-anchor="middle">Tank-1</text>
+                <text x="246" y="78" text-anchor="middle">Boiler</text>
+              </g>
+              <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="8" fill="currentColor" class="text-muted">
+                <rect x="10" y="100" width="52" height="14" rx="7" stroke="currentColor" stroke-width="1" fill="none"/>
+                <text x="36" y="110" text-anchor="middle">site:N</text>
+                <rect x="68" y="100" width="76" height="14" rx="7" stroke="currentColor" stroke-width="1" fill="none"/>
+                <text x="106" y="110" text-anchor="middle">building:A</text>
+                <rect x="150" y="100" width="76" height="14" rx="7" stroke="currentColor" stroke-width="1" fill="none"/>
+                <text x="188" y="110" text-anchor="middle">function:HVAC</text>
+                <rect x="232" y="100" width="78" height="14" rx="7" stroke="currentColor" stroke-width="1" fill="none"/>
+                <text x="271" y="110" text-anchor="middle">criticality:high</text>
+              </g>
+              <g class="text-warning" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9">
+                <rect x="6" y="138" width="304" height="32" rx="2" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" fill="rgb(245 158 11 / 0.04)" />
+                <text x="14" y="152" fill="currentColor">⚠ alarm: AHU1/SupplyTemp &gt; 23.5 °C  (deadband 1.0, delay 0s)</text>
+                <text x="14" y="164" fill="currentColor">⚠ alarm: Boiler1/FlueTemp &gt; 280 °C  (deadband 5.0, delay 0s)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="md:col-span-7 md:order-first lg:order-last">
+          <div class="md:pt-2">
+            <div class="flex items-baseline gap-3 mb-2">
+              <span class="font-mono text-brand text-sm">02</span>
+              <h3 class="text-xl font-semibold tracking-tight">{t(lang, 'how.2_configure.title')}</h3>
+            </div>
+            <p class="text-muted-strong text-sm leading-relaxed mb-4">{t(lang, 'how.2_configure.desc')}</p>
+            <ul class="text-sm text-muted space-y-1.5">
+              <li>· <span class="font-mono text-text/90">drivers</span> — host, port, protocole</li>
+              <li>· <span class="font-mono text-text/90">machines</span> — grouper les points par équipement</li>
+              <li>· <span class="font-mono text-text/90">tags</span> — site, building, function, criticality</li>
+              <li>· <span class="font-mono text-text/90">alarms</span> — high/low + deadband + delay + groupes</li>
+              <li>· <span class="font-mono text-text/90">revisions</span> — chaque modif commit, revert en 1 transaction</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+        <div class="md:col-span-4">
+          <div class="flex items-baseline gap-3 mb-2">
+            <span class="font-mono text-brand text-sm">03</span>
+            <h3 class="text-xl font-semibold tracking-tight">{t(lang, 'how.3_operate.title')}</h3>
+          </div>
+          <p class="text-muted-strong text-sm leading-relaxed">{t(lang, 'how.3_operate.desc')}</p>
+        </div>
+        <div class="md:col-span-8">
+          <div class="rounded-md border border-border bg-bg overflow-hidden">
+            <div class="bg-surface-hi/80 px-3 py-1.5 border-b border-border flex items-center justify-between text-[11px] font-mono text-muted">
+              <span>postgres — <span class="text-text/80">wiregrid.production</span></span>
+              <span class="text-brand">connected · 5432</span>
+            </div>
+            <pre class="font-mono text-[12.5px] leading-[1.55] p-4 whitespace-pre overflow-x-auto text-text"><Fragment set:html={sqlSnippet} /></pre>
+            <div class="bg-surface px-4 py-2.5 border-t border-border flex flex-wrap items-center gap-2 text-[11px] font-mono">
+              <span class="text-muted">connectors:</span>
+              <span class="px-1.5 py-0.5 border border-border rounded-sm text-text/80">Power BI</span>
+              <span class="px-1.5 py-0.5 border border-border rounded-sm text-text/80">Grafana</span>
+              <span class="px-1.5 py-0.5 border border-border rounded-sm text-text/80">Metabase</span>
+              <span class="px-1.5 py-0.5 border border-border rounded-sm text-text/80">Excel · ODBC</span>
+              <span class="px-1.5 py-0.5 border border-border rounded-sm text-text/80">psql</span>
+              <span class="text-muted ml-auto">no licensed connector</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>

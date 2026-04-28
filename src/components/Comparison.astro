@@ -7,68 +7,65 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Honest, factual comparison. Each row is verifiable from public docs of
-// the respective vendors at the time of writing (2026-04). Update if their
-// pricing/policies change.
 const rows = [
-  { criterion: 'tag_pricing',     wiregrid: 'no',     niagara: 'yes_5',  ignition: 'yes_lite', ecostruxure: 'yes_pro' },
-  { criterion: 'data_storage',    wiregrid: 'pg',     niagara: 'proprio', ignition: 'proprio', ecostruxure: 'proprio' },
-  { criterion: 'bi_connector',    wiregrid: 'native', niagara: 'export',  ignition: 'odbc',     ecostruxure: 'export'  },
-  { criterion: 'self_host',       wiregrid: 'docker', niagara: 'jvm',     ignition: 'jvm',     ecostruxure: 'cloud'    },
-  { criterion: 'config_versioning', wiregrid: 'git',  niagara: 'manual',  ignition: 'manual',  ecostruxure: 'manual'   },
-  { criterion: 'web_native',      wiregrid: 'yes',    niagara: 'partial', ignition: 'yes',     ecostruxure: 'yes'      },
-  { criterion: 'protocols',       wiregrid: 'p3',     niagara: 'p20',     ignition: 'p20',     ecostruxure: 'p15'      },
-  { criterion: 'startup_cost',    wiregrid: 'free',   niagara: '5k',      ignition: '4k',      ecostruxure: 'quote'    },
+  { criterion: 'tag_pricing',     wg: 'no',     ng: 'yes_5',  ig: 'yes_lite', ec: 'yes_pro' },
+  { criterion: 'data_storage',    wg: 'pg',     ng: 'proprio', ig: 'proprio', ec: 'proprio' },
+  { criterion: 'bi_connector',    wg: 'native', ng: 'export',  ig: 'odbc',     ec: 'export'  },
+  { criterion: 'self_host',       wg: 'docker', ng: 'jvm',     ig: 'jvm',     ec: 'cloud'    },
+  { criterion: 'config_versioning', wg: 'git',  ng: 'manual',  ig: 'manual',  ec: 'manual'   },
+  { criterion: 'web_native',      wg: 'yes',    ng: 'partial', ig: 'yes',     ec: 'yes'      },
+  { criterion: 'protocols',       wg: 'p3',     ng: 'p20',     ig: 'p20',     ec: 'p15'      },
+  { criterion: 'startup_cost',    wg: 'free',   ng: '5k',      ig: '4k',      ec: 'quote'    },
 ];
 
-// Cell colors: yes/native/no-tag = brand, no/proprio = muted, partial = warning.
-const cellStyle = (val: string) => {
-  if (['no', 'pg', 'native', 'docker', 'git', 'yes', 'free', 'p3'].includes(val)) {
-    return 'text-brand font-medium';
-  }
-  if (['partial', 'odbc', 'p20', 'p15'].includes(val)) {
-    return 'text-warning';
-  }
+const cellClass = (val: string) => {
+  if (['no', 'pg', 'native', 'docker', 'git', 'yes', 'free'].includes(val)) return 'text-brand';
+  if (['partial', 'odbc'].includes(val)) return 'text-warning';
   return 'text-muted';
 };
 ---
 
-<section id="comparison" class="px-6 py-20 border-t border-border">
-  <div class="mx-auto max-w-5xl">
-    <div class="max-w-2xl">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
-        {t(lang, 'comparison.title')}
-      </h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'comparison.subtitle')}</p>
+<section id="comparison" class="section">
+  <div class="mx-auto max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+      <div class="lg:col-span-5">
+        <div class="section-eyebrow">02 · Comparaison</div>
+        <h2 class="section-title">{t(lang, 'comparison.title')}</h2>
+      </div>
+      <p class="lg:col-span-7 section-lede mt-2 lg:mt-8">{t(lang, 'comparison.subtitle')}</p>
     </div>
 
-    <div class="mt-10 overflow-x-auto">
-      <table class="w-full border-collapse text-sm min-w-[640px]">
-        <thead>
-          <tr class="border-b border-border">
-            <th class="text-left py-3 pr-4 text-[11px] uppercase tracking-wider text-muted font-semibold">{t(lang, 'comparison.col.criterion')}</th>
-            <th class="text-left py-3 px-4 text-brand font-semibold">WireGrid</th>
-            <th class="text-left py-3 px-4 text-muted font-medium">Niagara N4</th>
-            <th class="text-left py-3 px-4 text-muted font-medium">Ignition</th>
-            <th class="text-left py-3 px-4 text-muted font-medium">EcoStruxure</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr class="border-b border-border/60 last:border-0">
-              <th scope="row" class="text-left py-3 pr-4 font-medium text-text">
-                {t(lang, `comparison.criterion.${row.criterion}`)}
+    <div class="border border-border rounded-md overflow-hidden bg-surface">
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-sm font-mono min-w-[680px]">
+          <thead class="bg-surface-hi">
+            <tr>
+              <th class="text-left py-2.5 pl-4 pr-3 text-[10px] uppercase tracking-[0.1em] text-muted font-medium border-b border-border">
+                {t(lang, 'comparison.col.criterion')}
               </th>
-              <td class={`py-3 px-4 ${cellStyle(row.wiregrid)}`}>{t(lang, `comparison.value.${row.wiregrid}`)}</td>
-              <td class={`py-3 px-4 ${cellStyle(row.niagara)}`}>{t(lang, `comparison.value.${row.niagara}`)}</td>
-              <td class={`py-3 px-4 ${cellStyle(row.ignition)}`}>{t(lang, `comparison.value.${row.ignition}`)}</td>
-              <td class={`py-3 px-4 ${cellStyle(row.ecostruxure)}`}>{t(lang, `comparison.value.${row.ecostruxure}`)}</td>
+              <th class="text-left py-2.5 px-3 text-[11px] uppercase tracking-[0.05em] text-brand font-semibold border-b border-border bg-brand/5">wiregrid</th>
+              <th class="text-left py-2.5 px-3 text-[11px] uppercase tracking-[0.05em] text-muted-strong font-medium border-b border-border">niagara n4</th>
+              <th class="text-left py-2.5 px-3 text-[11px] uppercase tracking-[0.05em] text-muted-strong font-medium border-b border-border">ignition</th>
+              <th class="text-left py-2.5 px-3 pr-4 text-[11px] uppercase tracking-[0.05em] text-muted-strong font-medium border-b border-border">ecostruxure</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr class={i % 2 === 0 ? '' : 'bg-bg/30'}>
+                <th scope="row" class="text-left py-2 pl-4 pr-3 font-sans font-medium text-text text-[13px] border-b border-border/50 last:border-0">
+                  {t(lang, `comparison.criterion.${row.criterion}`)}
+                </th>
+                <td class={`py-2 px-3 ${cellClass(row.wg)} bg-brand/[0.04] border-b border-border/50 last:border-0`}>{t(lang, `comparison.value.${row.wg}`)}</td>
+                <td class={`py-2 px-3 ${cellClass(row.ng)} border-b border-border/50 last:border-0`}>{t(lang, `comparison.value.${row.ng}`)}</td>
+                <td class={`py-2 px-3 ${cellClass(row.ig)} border-b border-border/50 last:border-0`}>{t(lang, `comparison.value.${row.ig}`)}</td>
+                <td class={`py-2 px-3 pr-4 ${cellClass(row.ec)} border-b border-border/50 last:border-0`}>{t(lang, `comparison.value.${row.ec}`)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <p class="mt-6 text-xs text-muted">{t(lang, 'comparison.disclaimer')}</p>
+    <p class="mt-4 text-[11px] font-mono text-muted">{t(lang, 'comparison.disclaimer')}</p>
   </div>
 </section>

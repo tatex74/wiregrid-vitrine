@@ -7,53 +7,55 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Equipment lists are claims about *protocol* compatibility (Modbus TCP /
-// OPC-UA / BACnet are open standards). Specific brands work via these
-// standards; "validation" means a project-specific I/O test, not a
-// promise that every PLC firmware ever shipped is on the happy path.
 const protocols = [
   {
     id: 'modbus',
     title: 'Modbus TCP',
     spec: 'TCP/502',
-    brands: ['Schneider M340 / M580', 'Siemens S7-1500 (Modbus FB)', 'ABB AC500', 'Wago 750', 'Phoenix Contact ILC', 'Rockwell ControlLogix (gateway)'],
+    refs: ['Schneider M340', 'Schneider M580', 'Siemens S7-1500 (Modbus FB)', 'ABB AC500', 'Wago 750-89x', 'Phoenix Contact ILC', 'Rockwell ControlLogix (gw)'],
   },
   {
     id: 'opcua',
     title: 'OPC-UA',
     spec: 'IEC 62541',
-    brands: ['Siemens S7-1500 (natif)', 'Schneider M580 OPC-UA', 'B&R X20', 'Beckhoff TwinCAT', 'KEPServerEX (gateway)'],
+    refs: ['Siemens S7-1500 (natif)', 'Schneider M580 OPC-UA', 'Beckhoff TwinCAT', 'B&R X20', 'KEPServerEX (gw)'],
   },
   {
     id: 'bacnet',
     title: 'BACnet/IP',
     spec: 'ASHRAE 135',
-    brands: ['Distech ECY', 'Honeywell WEBs', 'Trend IQ4', 'Siemens Desigo', 'JCI Metasys (BACnet/IP)'],
+    refs: ['Distech ECY', 'Honeywell WEBs', 'Trend IQ4', 'Siemens Desigo', 'JCI Metasys'],
   },
 ];
 ---
 
-<section id="equipment" class="px-6 py-20 border-t border-border">
-  <div class="mx-auto max-w-5xl">
-    <div class="max-w-2xl">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
-        {t(lang, 'equipment.title')}
-      </h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'equipment.subtitle')}</p>
+<section id="equipment" class="section">
+  <div class="mx-auto max-w-6xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+      <div class="lg:col-span-5">
+        <div class="section-eyebrow">05 · Compatibilité</div>
+        <h2 class="section-title">{t(lang, 'equipment.title')}</h2>
+      </div>
+      <p class="lg:col-span-7 section-lede mt-2 lg:mt-8">{t(lang, 'equipment.subtitle')}</p>
     </div>
 
-    <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border border-border rounded-md overflow-hidden">
       {protocols.map((p) => (
-        <div class="rounded-md border border-border bg-surface p-6">
+        <div class="bg-surface px-5 py-5">
           <div class="flex items-baseline justify-between mb-4">
-            <h3 class="font-semibold text-text">{p.title}</h3>
-            <span class="text-[10px] font-mono uppercase text-muted">{p.spec}</span>
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded-sm bg-brand/10 text-brand font-mono text-[10px] uppercase tracking-wider border border-brand/30">
+                {p.id}
+              </span>
+              <span class="font-semibold text-text">{p.title}</span>
+            </div>
+            <span class="font-mono text-[10px] text-muted">{p.spec}</span>
           </div>
-          <ul class="space-y-2 text-sm">
-            {p.brands.map((b) => (
+          <ul class="space-y-1.5 font-mono text-[12.5px]">
+            {p.refs.map((r) => (
               <li class="text-muted-strong flex items-start gap-2">
-                <span class="text-brand mt-1">·</span>
-                <span>{b}</span>
+                <span class="text-brand/60 select-none">·</span>
+                <span>{r}</span>
               </li>
             ))}
           </ul>
@@ -61,8 +63,6 @@ const protocols = [
       ))}
     </div>
 
-    <p class="mt-8 text-sm text-muted leading-relaxed max-w-3xl">
-      {t(lang, 'equipment.note')}
-    </p>
+    <p class="mt-5 text-sm text-muted-strong leading-relaxed max-w-3xl">{t(lang, 'equipment.note')}</p>
   </div>
 </section>

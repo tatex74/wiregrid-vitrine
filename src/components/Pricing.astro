@@ -7,10 +7,6 @@ interface Props {
 
 const { lang } = Astro.props;
 
-// Pricing structured for Schema.org Product/Offer JSON-LD downstream.
-// Numbers are placeholders the founder can adjust — kept concrete on
-// purpose because "On request" tanks both AI-search citation and
-// outbound-marketing trust.
 const tiers = [
   {
     id: 'free',
@@ -29,7 +25,7 @@ const tiers = [
   {
     id: 'pro',
     highlight: true,
-    cta_href: 'mailto:contact@wiregrid.fr?subject=Wiregrid%20Pro',
+    cta_href: 'mailto:contact@wiregrid.fr?subject=Wiregrid%20Production',
     cta_external: false,
     features: [
       'feature.points_unlimited',
@@ -44,43 +40,52 @@ const tiers = [
 ];
 ---
 
-<section id="pricing" class="py-20 px-6 bg-surface border-t border-border">
-  <div class="mx-auto max-w-4xl">
-    <div class="max-w-2xl mb-14">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">{t(lang, 'pricing.title')}</h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'pricing.subtitle')}</p>
+<section id="pricing" class="section">
+  <div class="mx-auto max-w-5xl">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+      <div class="lg:col-span-5">
+        <div class="section-eyebrow">06 · Tarifs</div>
+        <h2 class="section-title">{t(lang, 'pricing.title')}</h2>
+      </div>
+      <p class="lg:col-span-7 section-lede mt-2 lg:mt-8">{t(lang, 'pricing.subtitle')}</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       {tiers.map((tier) => (
-        <div class={`rounded-md p-8 bg-bg ${tier.highlight ? 'border-2 border-brand relative' : 'border border-border'}`}>
-          {tier.highlight && (
-            <div class="absolute -top-3 left-6 bg-brand text-bg text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-sm">
-              {t(lang, 'pricing.recommended')}
-            </div>
-          )}
-
-          <h3 class="text-2xl font-semibold">{t(lang, `pricing.${tier.id}.name`)}</h3>
-          <p class="text-muted mt-2 text-sm leading-relaxed">{t(lang, `pricing.${tier.id}.tagline`)}</p>
-
-          <div class="mt-6 flex items-baseline gap-2">
-            <span class="text-4xl font-semibold text-text">{t(lang, `pricing.${tier.id}.price`)}</span>
-            <span class="text-sm text-muted">{t(lang, `pricing.${tier.id}.period`)}</span>
+        <div class={`rounded-md p-6 bg-surface ${tier.highlight ? 'border border-brand/40' : 'border border-border'}`}>
+          <div class="flex items-baseline justify-between mb-1">
+            <h3 class="text-xl font-semibold tracking-tight">{t(lang, `pricing.${tier.id}.name`)}</h3>
+            {tier.highlight && (
+              <span class="text-[10px] font-mono uppercase tracking-wider text-brand bg-brand/10 px-1.5 py-0.5 rounded-sm border border-brand/30">
+                {t(lang, 'pricing.recommended')}
+              </span>
+            )}
           </div>
-          <p class="text-xs text-muted mt-1">{t(lang, `pricing.${tier.id}.price_note`)}</p>
+          <p class="text-muted text-sm leading-relaxed">{t(lang, `pricing.${tier.id}.tagline`)}</p>
 
-          <ul class="mt-8 space-y-3 text-sm">
+          <div class="mt-6 pb-5 border-b border-border">
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-semibold text-text tabular-nums">{t(lang, `pricing.${tier.id}.price`)}</span>
+              <span class="text-sm font-mono text-muted">{t(lang, `pricing.${tier.id}.period`)}</span>
+            </div>
+            <p class="text-xs text-muted mt-1.5 font-mono">{t(lang, `pricing.${tier.id}.price_note`)}</p>
+            {tier.id === 'pro' && (
+              <p class="text-[11px] text-brand mt-2 font-mono leading-relaxed" set:html={t(lang, 'pricing.pro.anchor_html')} />
+            )}
+          </div>
+
+          <ul class="mt-5 space-y-2 text-sm">
             {tier.features.map((feat) => (
               <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 mt-0.5 text-brand shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
+                <svg class="w-4 h-4 mt-[2px] text-brand shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+                  <polyline points="3 8 7 12 13 4" stroke-linejoin="miter"/>
                 </svg>
-                <span class="text-muted-strong">{t(lang, `pricing.${feat}`)}</span>
+                <span class="text-muted-strong" set:html={t(lang, `pricing.${feat}`)} />
               </li>
             ))}
           </ul>
 
-          <div class="mt-8">
+          <div class="mt-6">
             <a
               href={tier.cta_href}
               {...(tier.cta_external ? { target: '_blank', rel: 'noopener' } : {})}
@@ -93,6 +98,6 @@ const tiers = [
       ))}
     </div>
 
-    <p class="mt-8 text-xs text-muted text-center">{t(lang, 'pricing.footnote')}</p>
+    <p class="mt-6 text-[11px] font-mono text-muted">{t(lang, 'pricing.footnote')}</p>
   </div>
 </section>

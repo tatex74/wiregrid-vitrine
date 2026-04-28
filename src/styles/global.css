@@ -3,98 +3,143 @@
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
 
 @theme {
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-surface-hi: #273449;
-  --color-border: #334155;
-  --color-border-strong: #475569;
-  --color-text: #F8FAFC;
-  --color-muted: #94A3B8;
-  --color-muted-strong: #CBD5E1;
-  --color-brand: #06B6D4;
-  --color-brand-hover: #22D3EE;
-  --color-success: #10B981;
+  --color-bg: #0B0F14;
+  --color-surface: #131820;
+  --color-surface-hi: #1B2230;
+  --color-border: #232C3A;
+  --color-border-strong: #303B4C;
+  --color-text: #E6EDF3;
+  --color-muted: #8B96A7;
+  --color-muted-strong: #B7C0CC;
+
+  --color-brand: #34D399;
+  --color-brand-hover: #6EE7B7;
+  --color-brand-dim: #10B981;
+
+  --color-success: #34D399;
   --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-info: #3B82F6;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
 
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
 
-  --radius-sm: 4px;
-  --radius-md: 6px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
 }
 
-/* Base */
 html {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
   color: var(--color-text);
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Respect reduced-motion preference for the smooth scroll. */
+body {
+  letter-spacing: -0.005em;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* Focus rings — keyboard-only via :focus-visible to keep mouse interactions clean. */
 :focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
-/* Nav link — shared style across desktop + mobile menus. */
-.nav-link {
-  color: var(--color-muted);
-  transition: color 150ms;
-  text-decoration: none;
-}
-.nav-link:hover {
+::selection {
+  background-color: rgb(52 211 153 / 0.25);
   color: var(--color-text);
 }
+
+/* Inline mono for paths, endpoints, shell commands. */
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background-color: rgb(52 211 153 / 0.08);
+  color: var(--color-brand);
+  padding: 0.05em 0.35em;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgb(52 211 153 / 0.15);
+}
+.mono-plain {
+  font-family: var(--font-mono);
+}
+
+.nav-link {
+  color: var(--color-muted);
+  transition: color 120ms;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.nav-link:hover { color: var(--color-text); }
 .nav-link[aria-current="page"] {
   color: var(--color-text);
   font-weight: 500;
 }
 
-/* Buttons */
+.section {
+  padding: 4.5rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.section-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.section-title {
+  margin-top: 0.75rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.section-lede {
+  margin-top: 0.875rem;
+  color: var(--color-muted-strong);
+  max-width: 42rem;
+  line-height: 1.6;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 1rem;
   border-radius: var(--radius-sm);
   font-weight: 500;
   font-size: 0.875rem;
-  line-height: 1.5;
-  transition: background-color 150ms, color 150ms;
+  line-height: 1.4;
+  transition: background-color 120ms, color 120ms, border-color 120ms;
   cursor: pointer;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
 .btn-primary {
-  background-color: var(--color-brand);
+  background-color: var(--color-brand-dim);
   color: var(--color-bg);
+  font-weight: 600;
 }
-.btn-primary:hover {
-  background-color: var(--color-brand-hover);
-}
+.btn-primary:hover { background-color: var(--color-brand); }
 
 .btn-outline {
-  border: 1px solid var(--color-border-strong);
+  border-color: var(--color-border-strong);
   color: var(--color-text);
   background: transparent;
 }
@@ -103,7 +148,28 @@ html {
   color: var(--color-brand);
 }
 
+.btn-shell {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  background-color: rgb(255 255 255 / 0.02);
+  border-color: var(--color-border);
+  color: var(--color-muted-strong);
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  letter-spacing: 0;
+}
+.btn-shell::before {
+  content: "$";
+  color: var(--color-brand);
+  margin-right: 0.5rem;
+  font-weight: 600;
+}
+.btn-shell:hover {
+  border-color: var(--color-brand-dim);
+  color: var(--color-text);
+}
+
 .btn-lg {
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
+  padding: 0.6875rem 1.25rem;
+  font-size: 0.9375rem;
 }

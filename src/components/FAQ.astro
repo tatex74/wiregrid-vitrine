@@ -9,35 +9,23 @@ interface Props {
 const { lang } = Astro.props;
 ---
 
-<section id="faq" class="px-6 py-20 border-t border-border">
+<section id="faq" class="section">
   <div class="mx-auto max-w-3xl">
-    <div class="mb-14">
-      <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
-        {t(lang, 'faq.title')}
-      </h2>
-      <p class="mt-4 text-muted-strong leading-relaxed">{t(lang, 'faq.subtitle')}</p>
+    <div class="mb-8">
+      <div class="section-eyebrow">07 · FAQ</div>
+      <h2 class="section-title">{t(lang, 'faq.title')}</h2>
+      <p class="section-lede">{t(lang, 'faq.subtitle')}</p>
     </div>
 
-    <div class="space-y-3">
+    <div class="border border-border rounded-md divide-y divide-border bg-surface">
       {FAQ_KEYS.map((key) => (
-        <details class="group rounded-md border border-border bg-surface px-5 py-4 open:border-brand/40 transition-colors">
-          <summary class="flex items-start gap-3 cursor-pointer list-none font-medium text-text">
-            <svg
-              class="w-4 h-4 mt-1 shrink-0 text-brand transition-transform group-open:rotate-45"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            <span class="flex-1">{t(lang, `faq.${key}.q`)}</span>
+        <details class="group">
+          <summary class="flex items-start gap-3 cursor-pointer list-none px-5 py-3.5 hover:bg-surface-hi/40 transition-colors">
+            <span class="font-mono text-brand text-[11px] mt-1 shrink-0 group-open:rotate-90 transition-transform inline-block">▸</span>
+            <span class="flex-1 font-medium text-text text-sm">{t(lang, `faq.${key}.q`)}</span>
           </summary>
-          <div class="mt-3 pl-7 text-sm text-muted-strong leading-relaxed">
-            <p set:html={t(lang, `faq.${key}.a_html`)} />
+          <div class="px-5 pb-4 pl-12 text-sm text-muted-strong leading-relaxed">
+            <div set:html={t(lang, `faq.${key}.a_html`)} />
           </div>
         </details>
       ))}
