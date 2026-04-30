@@ -186,7 +186,7 @@
     },
     "support": {
       "q": "À quoi ressemble le support ?",
-      "a_html": "Plan Découverte : documentation et issues GitHub publiques. Plan Production : email avec engagement de réponse sous 24 h ouvrées, visio sur demande, accès direct au développeur principal."
+      "a_html": "Plan Découverte : documentation publique + email best-effort à <a href=\"mailto:contact@wiregrid.fr\" class=\"text-brand hover:underline\">contact@wiregrid.fr</a>. Plan Production : email avec engagement de réponse sous 24 h ouvrées, visio sur demande, accès direct au développeur principal."
     },
     "trial": {
       "q": "Combien de temps pour tester sérieusement ?",

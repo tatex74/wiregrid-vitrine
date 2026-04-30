@@ -2,7 +2,7 @@
 
 > Industrial supervision (SCADA) platform built around two principles: no per-tag pricing, and data stored in a standard PostgreSQL database directly queryable from Power BI, Grafana or Excel.
 
-Wiregrid acquires data from industrial PLCs over Modbus TCP, OPC-UA and BACnet/IP, exposes it live (sub-100 ms WebSocket push) and archives it into a TimescaleDB hypertable. Built for small-to-mid industrial sites (50–500 measurement points) where Niagara N4 and Ignition are too expensive and SaaS-only platforms are unacceptable for data residency.
+Wiregrid acquires data from industrial PLCs over Modbus TCP, OPC-UA and BACnet/IP, exposes it live (sub-100 ms WebSocket push) and archives it into a TimescaleDB hypertable. Built for small-to-mid industrial and commercial sites (50 to 500 measurement points) where legacy tag-priced SCADA platforms are too expensive and SaaS-only platforms are unacceptable for data residency.
 
 ## What Wiregrid is
 
@@ -16,50 +16,54 @@ Wiregrid acquires data from industrial PLCs over Modbus TCP, OPC-UA and BACnet/I
 ## What Wiregrid is not
 
 - Not a safety / SIL-rated control system. Use a certified PLC for interlocks. Wiregrid only supervises, alarms, archives.
-- Not (yet) a wiresheet visual logic editor. The execution engine ships, the Vue Flow editor lands Q3 2026.
+- Not (yet) a wiresheet visual logic editor. The execution engine ships, the visual editor lands Q3 2026.
 - Not a full HMI builder. No drag-drop screen designer (planned later).
 
-## Capabilities shipped today (April 2026)
+## Capabilities shipped today
 
 - Multi-protocol acquisition: Modbus TCP, OPC-UA, BACnet/IP.
 - Live points (read + write) over WebSocket, polling fallback.
 - TimescaleDB historian with per-point on_change deadband or fixed interval.
 - Operational alarms: high/low thresholds with deadband and delay, severities (info/warning/critical), notification email groups, full event log.
-- Git-style config versioning: every change goes into a revision. Diff between two revisions, single-transaction revert. Hot-reload via pg_notify.
-- Open API: REST on /py/v1/{drivers,machines,points,alarms,revisions} and WebSocket /ws/live. Direct SQL access to PostgreSQL — Power BI connects via ODBC without a vendor connector.
+- Tag-based organisation: equipment is tagged once (site, building, function, criticality), views are filtered or composed from those tags. Adding new equipment with the right tags makes it appear automatically in every relevant view.
+- Git-style config versioning: every change goes into a revision. Diff between two revisions, single-transaction revert, audit trail of who changed what when. Hot-reload via pg_notify.
+- Direct data access: REST API on /py/v1/{drivers,machines,points,alarms,revisions} and WebSocket /ws/live. Direct SQL access to PostgreSQL. Power BI, Grafana, Metabase, Excel connect via standard ODBC, no proprietary connector.
 - Multi-project / multi-tenant: project_id scoping on every entity.
 
-## Differentiators vs Niagara N4 / Ignition / EcoStruxure
+## Differentiators vs legacy SCADA platforms
 
-- Zero per-tag pricing. Niagara charges roughly €5/tag/year; Ignition's free tier ("Maker") has quota limits; EcoStruxure has per-device modules. Wiregrid Production tier is a flat €990/year for unlimited points on one instance.
-- Data in standard PostgreSQL + TimescaleDB. No proprietary historian format. Power BI / Grafana / Metabase / Excel connect directly to your database — no export, no middleware, no licensed connector.
-- Self-hosted by default. Your data never leaves your network. Runs on a Raspberry Pi 4, an industrial mini-PC, or a €5/month VPS. No JVM, no station application.
-- Versioned config with one-click revert. SCADA platforms traditionally rely on manual backup; Wiregrid commits changes like a git repository and lets you roll back to any deployed revision in a single transaction.
+- Zero per-tag pricing. Wiregrid Production tier is a flat €990/year for unlimited points on one instance. Tag-priced suites typically charge per-tag annually with separate per-protocol modules and per-station fees that scale linearly with site size.
+- Data in standard PostgreSQL + TimescaleDB. No proprietary historian format. Power BI, Grafana, Metabase or Excel connect directly to your database. No export step, no middleware, no licensed BI connector.
+- Self-hosted by default. Your data never leaves your network. Runs on a Raspberry Pi 4, an industrial mini-PC, or a 5 EUR/month VPS. No JVM, no station application.
+- Versioned configuration with one-click revert. Industrial supervision platforms traditionally rely on manual backup. Wiregrid commits changes like a git repository and lets you roll back to any deployed revision in a single transaction.
 
 ## Hardware footprint
 
 - Minimum: 2 vCPU, 4 GB RAM, 20 GB disk.
 - Tested on: Hetzner CX22, Raspberry Pi 4, industrial mini-PCs.
-- Demo runs on a €4/month nano VPS.
+- Demo runs on a 4 EUR/month nano VPS.
 
 ## Pricing
 
-- Discovery: €0/forever, up to 50 points, Modbus TCP only, 7-day historian, online docs support.
-- Production: €990/year (excl. VAT), unlimited points, all 3 protocols, unlimited historian, email + video support.
-- 12-month commitment. Self-hosted — Wiregrid has no access to your PostgreSQL.
+- Discovery: 0 EUR/forever, up to 50 points, Modbus TCP, 7-day historian, public documentation + best-effort email support.
+- Production: 990 EUR/year (excl. VAT), unlimited points, all 3 protocols (Modbus TCP + OPC-UA + BACnet/IP), unlimited historian, email + video support with a 1-business-day response SLA.
+- 12-month commitment. Self-hosted. Wiregrid has no access to your PostgreSQL.
 
-## Live demo and signup
+## How to evaluate
 
-- Online demo: https://demo.wiregrid.fr (no signup, public, read-only-ish — you can edit but data resets periodically).
-- Signup flow generates a private project clone in under a second (10 drivers, 13 machines, 18 alarms, 60 machine points pre-seeded).
+Three doors depending on your need:
 
-## Open source
+- Online demo: https://demo.wiregrid.fr (no signup, public, simulated industrial-site data: 10 drivers, 13 machines, 18 alarms). 60 seconds to click around and see the UI.
+- 7-day trial on your infrastructure: https://wiregrid.fr/fr/trial/ (or https://wiregrid.fr/en/trial/). Fill the form, receive a license.jwt + docker-compose.yml by email, run `docker compose up -d` on your server, wire your real PLCs, validate in real conditions. Trial limits: 5 drivers, 15 machines, 500 points, full feature set. After 7 days the app switches to read-only, your data and configuration stay accessible.
+- Production: contact contact@wiregrid.fr for a quote and a permanent license tied to your project_id.
 
-Not publicly yet. Candidate licenses at public release: AGPL-3.0 or source-available. In the meantime, all customer data is in standard SQL on the customer's own server — no lock-in even pre-OSS.
+## Distribution and licensing
+
+Closed-source commercial product. The full backend ships as a compiled Docker image on ghcr.io. License enforcement uses Ed25519-signed JWT licenses (offline verification, no phone-home, air-gap-safe). Customer data lives entirely on the customer's PostgreSQL on the customer's server. The standard SQL data format means there is no vendor lock-in even though the platform itself is closed source.
 
 ## Project status
 
-Phases 1–6 complete (April 2026): Laravel-to-Python backend migration done, demo on Cloudflare Pages live, Hetzner-hosted interactive demo decommissioned. Wiresheet UI port (recovered from the deleted Laravel codebase) targeted for Q3 2026.
+Production-ready as of Q2 2026. Wiresheet visual editor targeted for Q3 2026. Distant multi-site supervision with edge gateways and a consolidating central instance targeted for Q4 2026.
 
 ## Contact
 
@@ -69,7 +73,7 @@ contact@wiregrid.fr
 
 - Marketing site: https://wiregrid.fr
 - Live demo: https://demo.wiregrid.fr
+- 7-day trial form (FR): https://wiregrid.fr/fr/trial/
+- 7-day trial form (EN): https://wiregrid.fr/en/trial/
 - Pricing: https://wiregrid.fr/fr/#pricing
 - FAQ: https://wiregrid.fr/fr/#faq
-- Comparison vs Niagara/Ignition/EcoStruxure: https://wiregrid.fr/fr/#comparison
-- Equipment compatibility: https://wiregrid.fr/fr/#equipment

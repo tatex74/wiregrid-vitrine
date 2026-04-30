@@ -186,7 +186,7 @@
     },
     "support": {
       "q": "What does support look like?",
-      "a_html": "Discovery plan: documentation and public GitHub issues. Production plan: email with a 1-business-day response SLA, video calls on request, direct access to the lead developer."
+      "a_html": "Discovery plan: public documentation + best-effort email to <a href=\"mailto:contact@wiregrid.fr\" class=\"text-brand hover:underline\">contact@wiregrid.fr</a>. Production plan: email with a 1-business-day response SLA, video calls on request, direct access to the lead developer."
     },
     "trial": {
       "q": "How long do I need to seriously try it?",
