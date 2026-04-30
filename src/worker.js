@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker entry — delegates every request to the static assets
+ * Cloudflare Worker entry that delegates every request to the static assets
  * binding (`env.ASSETS`), which serves files from ./dist as configured
  * in wrangler.jsonc.
  *
