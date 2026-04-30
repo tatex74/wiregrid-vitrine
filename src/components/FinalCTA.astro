@@ -15,15 +15,18 @@ const { lang } = Astro.props;
     <p class="section-lede mx-auto">{t(lang, 'final_cta.subtitle')}</p>
 
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-        {t(lang, 'final_cta.cta')}
+      <a href={`/${lang}/trial/`} class="btn btn-primary btn-lg">
+        {t(lang, 'final_cta.cta_trial')}
         <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M6 3l5 5-5 5" stroke-linecap="round"/>
         </svg>
       </a>
-      <a href="mailto:contact@wiregrid.fr?subject=Wiregrid" class="btn btn-outline btn-lg">
-        {t(lang, 'final_cta.alt_cta')}
+      <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+        {t(lang, 'final_cta.cta_demo')}
       </a>
     </div>
+    <p class="mt-6 text-[13px] text-muted">
+      <a href="mailto:contact@wiregrid.fr?subject=Wiregrid" class="text-muted-strong hover:text-text underline-offset-4 hover:underline">{t(lang, 'final_cta.alt_cta')}</a>
+    </p>
   </div>
 </section>

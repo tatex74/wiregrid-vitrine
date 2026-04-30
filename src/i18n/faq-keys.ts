@@ -16,6 +16,8 @@ export const FAQ_KEYS = [
   'wiresheet_status',
   'support',
   'trial',
+  'trial_what_happens',
+  'trial_end',
 ] as const;
 
 export type FAQKey = (typeof FAQ_KEYS)[number];

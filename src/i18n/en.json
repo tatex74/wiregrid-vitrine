@@ -9,8 +9,9 @@
   "hero": {
     "title_html": "A web SCADA platform that reads your PLCs, historises, organises, alerts. And stays <span class=\"text-brand\">open to your tools</span>.",
     "subtitle_html": "Wiregrid reads your PLCs over <code>Modbus TCP</code>, <code>OPC-UA</code> and <code>BACnet/IP</code>, archives every measurement, and lets Power BI, Grafana or Excel connect directly. No per-tag licensing. No proprietary connector.",
-    "cta_demo": "See the demo",
-    "cta_note_html": "Public demo, no sign-up. Auth and data residency available the moment you self-host.",
+    "cta_trial": "Try 7 days on my infra",
+    "cta_demo": "See the live demo",
+    "cta_note_html": "7-day trial, no credit card. Public demo without sign-up for a quick look.",
     "preview_label": "Live demo · simulated values (real WebSocket push in the actual demo)"
   },
   "app_preview": {
@@ -122,7 +123,7 @@
       "price": "€990",
       "period": "/ year",
       "price_note": "per instance, unlimited points",
-      "cta": "Request a quote"
+      "cta": "Try 7 days on my infra"
     },
     "feature": {
       "points_50": "Up to 50 points",
@@ -189,15 +190,67 @@
     },
     "trial": {
       "q": "How long do I need to seriously try it?",
-      "a_html": "The online demo works as an instant POC (60 seconds of clicking around). For a trial on your own equipment, plan one to two hours to wire up a PLC and see your real points."
+      "a_html": "Three doors depending on your need. The online demo works as an instant POC (60 seconds of clicking around). The <a href=\"/en/trial/\" class=\"text-brand hover:underline\">7-day trial</a> gives you the full app on your infra, with your PLCs, to validate in real conditions. Beyond that, you switch to a yearly production licence."
+    },
+    "trial_what_happens": {
+      "q": "How does the 7-day trial work?",
+      "a_html": "You fill the form on <a href=\"/en/trial/\" class=\"text-brand hover:underline\">/en/trial/</a>. You immediately receive an email with your <code>license.jwt</code>, a ready-to-use <code>docker-compose.yml</code>, and the install command. You run <code>docker compose up -d</code> on your server, wire up your PLCs, explore. No credit card, no auto-renewal, no extra account on top."
+    },
+    "trial_end": {
+      "q": "What happens to my install when the 7 days are up?",
+      "a_html": "The app switches to read-only. You keep access to your historised data, you can export your configuration and historian. Writes (adding a point, editing an alarm, deploying a revision) are blocked until you activate a production licence. Nothing is deleted, nothing is volatile. To extend, write to contact@wiregrid.fr."
     }
   },
   "final_cta": {
     "eyebrow": "Ready to try?",
-    "title": "Launch the demo. 60 seconds to make up your mind.",
-    "subtitle": "No sign-up. Simulated industrial-site data: 10 drivers, 13 machines, 18 alarms. Click anywhere.",
-    "cta": "See the live demo",
+    "title": "Two ways to test. At your own pace.",
+    "subtitle": "60 seconds on the live demo to make up your mind. 7 days on your infra with your PLCs to validate seriously. No sign-up, no credit card.",
+    "cta_trial": "Try 7 days on my infra",
+    "cta_demo": "See the live demo",
     "alt_cta": "Get in touch"
+  },
+  "trial": {
+    "meta": {
+      "title": "7-day trial · Wiregrid",
+      "description": "Get a 7-day trial licence by email, run Wiregrid on your own infra with your PLCs, validate in real conditions. No credit card, no auto-renewal."
+    },
+    "eyebrow": "7-day trial",
+    "title": "Wiregrid on your infra. 7 days. No sign-up.",
+    "subtitle_html": "Fill in this form, receive by email your licence and a ready-to-use <code>docker-compose.yml</code>. Run <code>docker compose up -d</code> on your server, wire up your PLCs, validate in real conditions.",
+    "form": {
+      "name_label": "Name",
+      "name_placeholder": "Your name",
+      "email_label": "Work email",
+      "email_placeholder": "you@company.com",
+      "company_label": "Company",
+      "company_optional": "optional",
+      "company_placeholder": "Your company",
+      "use_case_label": "Use case",
+      "use_case_optional": "optional",
+      "use_case_placeholder": "What kind of site, how many points, which PLCs...",
+      "submit": "Send my trial licence",
+      "submitting": "Sending...",
+      "error_generic": "Something went wrong. Try again or write to contact@wiregrid.fr.",
+      "error_turnstile": "Please complete the anti-bot challenge before submitting.",
+      "error_rate_limit": "You already requested a licence recently. Try again in 24 hours or write to contact@wiregrid.fr.",
+      "error_dedupe": "A licence has already been issued for this address in the last 30 days. Check your inbox (spam included) or write to contact@wiregrid.fr."
+    },
+    "disclaimer": {
+      "limits_html": "Trial licence limits: 5 drivers, 15 machines, 500 points, full feature set (acquisition, historian, alarms, wiresheet, SQL access).",
+      "duration_html": "Duration: 7 days from issuance. On expiration, the app switches to <strong>read-only</strong>: your data stays yours, export remains available.",
+      "no_card_html": "No credit card. No auto-renewal. No automated marketing emails beyond the trial follow-up."
+    },
+    "what_next": {
+      "title": "What happens next",
+      "step_1_html": "<strong>Immediately:</strong> email with <code>license.jwt</code>, <code>docker-compose.yml</code> and the install command.",
+      "step_2_html": "<strong>Day 6:</strong> reminder 24 hours before expiration, with a Calendly link if you want to chat.",
+      "step_3_html": "<strong>Day 7:</strong> post-trial check-in. Move to production or not, your call."
+    },
+    "success": {
+      "title": "Check your inbox",
+      "body_html": "We sent an email to <strong class=\"font-mono\">{email}</strong> with your licence and the install command. If nothing arrives within 5 minutes (spam included), write to <a href=\"mailto:contact@wiregrid.fr\" class=\"text-brand hover:underline\">contact@wiregrid.fr</a>.",
+      "back": "Back to home"
+    }
   },
   "footer": {
     "product": "Product",

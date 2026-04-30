@@ -26,12 +26,15 @@ const { lang } = Astro.props;
       <span set:html={t(lang, 'hero.subtitle_html')} />
     </p>
 
-    <div class="mt-10 flex items-center justify-center">
-      <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-        {t(lang, 'hero.cta_demo')}
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href={`/${lang}/trial/`} class="btn btn-primary btn-lg">
+        {t(lang, 'hero.cta_trial')}
         <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M6 3l5 5-5 5" stroke-linecap="round"/>
         </svg>
+      </a>
+      <a href="https://demo.wiregrid.fr" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+        {t(lang, 'hero.cta_demo')}
       </a>
     </div>
 

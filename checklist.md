@@ -6,27 +6,15 @@ For the trial license system that spans both this repo and the wiregrid product 
 
 ---
 
-## En cours: refonte vitrine v3 (uncommitted WIP)
+## Refonte vitrine v3 — fermée le 2026-04-30
 
-État au 2026-04-30. Derniers commits sur `dev`: `028b86a fix(logo): restore the original logo`, `4e861e2 feat: vitrine v3 light mode warm`.
+Closure par vitrine-Claude en 3 commits atomiques sur `dev`, CI verte en 25s, tree clean :
 
-Working tree non-commit avec une refonte design en cours:
+- `2fdbd18 chore: add CLAUDE.md and checklist.md` (foundational docs multi-Claude workflow)
+- `51021e4 style: remove em-dash from worker.js comment` (hygiène hard-rule)
+- `c8d3d66 feat(vitrine): v3 refonte light mode warm` (atomique, 19 fichiers, +519/-617)
 
-- Components modifiés: AppPreview, Features, Header, Hero, Pricing
-- Components supprimés: Comparison, Equipment, HowItWorks, Stats
-- Components untracked: FinalCTA, Lifecycle, Personas
-- Layouts/pages modifiés: Base, en/index, fr/index
-- i18n: en.json, fr.json, faq-keys.ts
-- Worker: src/worker.js (à diagnostiquer, peut être lié au refacto v3 ou à un début de signer)
-- Styles: global.css
-
-À faire avant d'attaquer la Vague 5:
-
-- [ ] Lire les diffs section par section et décider: WIP à finir ou à reverter (côté vitrine-Claude au démarrage, briefer Bruno)
-- [ ] Vérifier le build local (`npm run build`) et les tests (`npm test`)
-- [ ] Si à garder: découper en commits cohérents (feat / fix / style / refactor par scope), push sur dev, CI verte
-- [ ] Si à reverter: `git checkout -- .` et `git clean -fd`, brief Bruno avant
-- [ ] Aligner README.md sur l'état post-refonte si nécessaire
+État `dev` = `origin/dev`. Prêt pour Vague 5.
 
 ---
 
@@ -34,12 +22,20 @@ Working tree non-commit avec une refonte design en cours:
 
 Spec figée: `c:/Users/bruno/Desktop/Dev/wiregrid-lead/docs/adr/0006-trial-license-system.md` (lecture seule, ne modifie pas). Préalable côté wiregrid: génération des paires de clés Ed25519 par dev-Claude wiregrid + transmission de la clé privée trial via `wrangler secret put TRIAL_SIGNING_KEY` faite par Bruno.
 
+**Plan d'attaque (validé lead 2026-04-30)** : ordre A→F. Tu peux démarrer A immédiatement, sans bloquer sur les préalables. Pour C (signature JWT), stub la clé en test avec une paire générée à la volée dans `setUp` ; le branchement avec la vraie clé se fait quand Bruno l'a posée.
+
+**Statut des préalables au 2026-04-30** :
+- `TRIAL_SIGNING_KEY` : pas encore posée. Dev-Claude wiregrid génère les paires en premier dans Vague 5 wiregrid-side (`scripts/generate_license_keys.py`), Bruno relaie la privée via `wrangler secret put`. Estimation : 1-2 jours côté wiregrid.
+- `RESEND_API_KEY` : pas encore posée. Bruno crée le compte Resend en parallèle, pose le secret. Tant que pas posée, mock l'envoi en test (assertion sur le payload qu'on enverrait).
+- `TURNSTILE_SECRET_KEY` + siteKey public : pas encore provisionné. Bruno provisionne via le dashboard Cloudflare, transmet siteKey à câbler dans `trial.astro`. Tant que pas en place, utilise les test keys publiques de Cloudflare (`1x00000000000000000000AA` siteKey + `1x0000000000000000000000000000000AA` secret) qui acceptent tout en dev.
+- **Sender email** (lead 2026-04-30) : `noreply@wiregrid.fr` pour la production (DKIM + SPF à configurer sur la zone wiregrid.fr côté Cloudflare DNS, ~10 min). Pour le dev/test avant configuration DKIM, fallback sur `onboarding@resend.dev` (sender Resend par défaut, fonctionne sans setup DNS).
+
 **Page Astro et UX**
 
-- [ ] `src/pages/<lang>/trial.astro` (FR + EN): formulaire (nom, email, entreprise opt, use-case opt), Cloudflare Turnstile widget, POST vers `/api/trial`, écran de succès "Mail envoyé, vérifiez votre boîte"
-- [ ] i18n keys: ajout dans `src/i18n/fr.json` + `en.json` + `faq-keys.ts` si pertinent
-- [ ] Lien "Essayer 7 jours" depuis Hero, FinalCTA, Pricing
-- [ ] FAQ: ajout d'entrées "Comment se passe l'essai ?", "Que devient mon installation à la fin ?"
+- [x] `src/pages/<lang>/trial.astro` (FR + EN): formulaire (nom, email, entreprise opt, use-case opt), Cloudflare Turnstile widget, POST vers `/api/trial`, écran de succès "Mail envoyé, vérifiez votre boîte"
+- [x] i18n keys: ajout dans `src/i18n/fr.json` + `en.json` + `faq-keys.ts` si pertinent
+- [x] Lien "Essayer 7 jours" depuis Hero, FinalCTA, Pricing
+- [x] FAQ: ajout d'entrées "Comment se passe l'essai 7 jours ?", "Que devient mon installation à la fin ?"
 
 **Worker `src/worker.js` route `POST /api/trial`**
 
@@ -73,7 +69,7 @@ Spec figée: `c:/Users/bruno/Desktop/Dev/wiregrid-lead/docs/adr/0006-trial-licen
 - [ ] Rejet sur dedupe KV
 - [ ] Rejet rate-limit (4e requête)
 - [ ] Génération JWT: claims attendus, signature valide avec une clé de test
-- [ ] Smoke build static via `built-html.test.ts` étendu pour la nouvelle page trial
+- [x] Smoke build static via `built-html.test.ts` étendu pour la nouvelle page trial
 
 **CRL endpoint (optionnel, pas urgent)**
 

@@ -16,6 +16,8 @@ const pages = {
   apex: resolve(dist, 'index.html'),
   fr: resolve(dist, 'fr', 'index.html'),
   en: resolve(dist, 'en', 'index.html'),
+  fr_trial: resolve(dist, 'fr', 'trial', 'index.html'),
+  en_trial: resolve(dist, 'en', 'trial', 'index.html'),
 };
 
 let html: Record<keyof typeof pages, string>;
@@ -32,6 +34,8 @@ beforeAll(() => {
     apex: readFileSync(pages.apex, 'utf-8'),
     fr: readFileSync(pages.fr, 'utf-8'),
     en: readFileSync(pages.en, 'utf-8'),
+    fr_trial: readFileSync(pages.fr_trial, 'utf-8'),
+    en_trial: readFileSync(pages.en_trial, 'utf-8'),
   };
 });
 
@@ -39,6 +43,10 @@ describe('Built pages exist and have a <title>', () => {
   for (const lang of ['fr', 'en'] as const) {
     it(`${lang}/index.html has a <title>`, () => {
       expect(html[lang]).toMatch(/<title>[^<]+<\/title>/);
+    });
+    it(`${lang}/trial/index.html has a <title>`, () => {
+      const key = `${lang}_trial` as keyof typeof html;
+      expect(html[key]).toMatch(/<title>[^<]+<\/title>/);
     });
   }
 });
@@ -99,4 +107,41 @@ describe('Apex root redirects to /fr/', () => {
   it('apex page is a redirect stub pointing to /fr/', () => {
     expect(html.apex).toMatch(/url=\/fr\//);
   });
+});
+
+describe('Trial pages wire to /api/trial and Turnstile', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    const key = `${lang}_trial` as keyof typeof html;
+
+    it(`${lang}/trial/index.html POSTs to /api/trial`, () => {
+      // The fetch URL is rendered inline in the page script (since it's
+      // is:inline). It must be the same-origin /api/trial route.
+      expect(html[key]).toContain("'/api/trial'");
+    });
+
+    it(`${lang}/trial/index.html embeds the Turnstile widget script`, () => {
+      expect(html[key]).toMatch(/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js/);
+    });
+
+    it(`${lang}/trial/index.html exposes a Turnstile siteKey`, () => {
+      // Must be either a real key or Cloudflare's public test key.
+      // We just check the data-sitekey attribute is set and non-empty.
+      expect(html[key]).toMatch(/class="cf-turnstile"[^>]*data-sitekey="[^"]+"/);
+    });
+
+    it(`${lang}/trial/index.html has the form fields name, email, company, useCase`, () => {
+      expect(html[key]).toMatch(/name="name"/);
+      expect(html[key]).toMatch(/name="email"/);
+      expect(html[key]).toMatch(/name="company"/);
+      expect(html[key]).toMatch(/name="useCase"/);
+    });
+  }
+});
+
+describe('Landing pages link to the trial page', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    it(`${lang}/index.html links to /${lang}/trial/`, () => {
+      expect(html[lang]).toMatch(new RegExp(`href="/${lang}/trial/"`));
+    });
+  }
 });

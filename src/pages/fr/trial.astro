@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import TrialForm from '../../components/TrialForm.astro';
+import { t } from '../../i18n';
+
+const lang = 'fr' as const;
+---
+
+<Base
+  lang={lang}
+  title={t(lang, 'trial.meta.title')}
+  description={t(lang, 'trial.meta.description')}
+>
+  <TrialForm lang={lang} />
+</Base>

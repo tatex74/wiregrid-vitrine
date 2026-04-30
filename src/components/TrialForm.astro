@@ -1,0 +1,259 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+// Turnstile siteKey: build-time env. Falls back to Cloudflare's public test
+// key (always-passes) when not set, so local builds and dev preview work
+// without provisioning. Replace at deploy time via PUBLIC_TURNSTILE_SITE_KEY.
+const turnstileSiteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
+---
+
+<section class="px-6 py-20 md:py-24">
+  <div class="mx-auto max-w-3xl">
+    <div class="text-center mb-12">
+      <div class="section-eyebrow justify-center">{t(lang, 'trial.eyebrow')}</div>
+      <h1 class="section-title">{t(lang, 'trial.title')}</h1>
+      <p class="section-lede mx-auto" set:html={t(lang, 'trial.subtitle_html')} />
+    </div>
+
+    <div id="trial-form-wrapper" class="bg-surface rounded-xl border border-border p-6 md:p-10">
+      <form id="trial-form" novalidate>
+        <div id="trial-error" class="hidden mb-6 px-4 py-3 rounded-md text-[14px] border" style="background:rgb(220 38 38 / 0.05);border-color:rgb(220 38 38 / 0.25);color:#991B1B;" role="alert"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label for="trial-name" class="block text-[13px] font-medium text-text mb-1.5">
+              {t(lang, 'trial.form.name_label')}
+            </label>
+            <input
+              id="trial-name"
+              name="name"
+              type="text"
+              required
+              autocomplete="name"
+              placeholder={t(lang, 'trial.form.name_placeholder')}
+              class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+            />
+          </div>
+          <div>
+            <label for="trial-email" class="block text-[13px] font-medium text-text mb-1.5">
+              {t(lang, 'trial.form.email_label')}
+            </label>
+            <input
+              id="trial-email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              placeholder={t(lang, 'trial.form.email_placeholder')}
+              class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+            />
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <label for="trial-company" class="block text-[13px] font-medium text-text mb-1.5">
+            {t(lang, 'trial.form.company_label')}
+            <span class="ml-1 text-muted text-[12px] font-normal">({t(lang, 'trial.form.company_optional')})</span>
+          </label>
+          <input
+            id="trial-company"
+            name="company"
+            type="text"
+            autocomplete="organization"
+            placeholder={t(lang, 'trial.form.company_placeholder')}
+            class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+          />
+        </div>
+
+        <div class="mt-5">
+          <label for="trial-use-case" class="block text-[13px] font-medium text-text mb-1.5">
+            {t(lang, 'trial.form.use_case_label')}
+            <span class="ml-1 text-muted text-[12px] font-normal">({t(lang, 'trial.form.use_case_optional')})</span>
+          </label>
+          <textarea
+            id="trial-use-case"
+            name="useCase"
+            rows="3"
+            placeholder={t(lang, 'trial.form.use_case_placeholder')}
+            class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 resize-none"
+          ></textarea>
+        </div>
+
+        <div class="mt-6 flex justify-center">
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div>
+        </div>
+
+        <div class="mt-7">
+          <button
+            id="trial-submit"
+            type="submit"
+            class="btn btn-primary btn-lg w-full justify-center"
+          >
+            <span id="trial-submit-label">{t(lang, 'trial.form.submit')}</span>
+            <svg id="trial-submit-spinner" class="hidden w-4 h-4 animate-spin" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M8 1.5a6.5 6.5 0 0 1 6.5 6.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="trial-success" class="hidden bg-surface rounded-xl border border-border p-8 md:p-12 text-center">
+      <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:rgb(5 150 105 / 0.1);">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" aria-hidden="true">
+          <polyline points="5 12 10 17 19 8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-semibold tracking-tight text-text">{t(lang, 'trial.success.title')}</h2>
+      <p id="trial-success-body" class="mt-3 text-[15px] text-muted-strong leading-relaxed max-w-xl mx-auto" set:html={t(lang, 'trial.success.body_html').replace('{email}', '<span data-success-email></span>')} />
+      <a href={`/${lang}/`} class="btn btn-outline mt-7">{t(lang, 'trial.success.back')}</a>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5 text-[14px] text-muted-strong">
+      <div class="bg-bg-alt/50 rounded-md border border-border p-4 leading-relaxed" set:html={t(lang, 'trial.disclaimer.limits_html')} />
+      <div class="bg-bg-alt/50 rounded-md border border-border p-4 leading-relaxed" set:html={t(lang, 'trial.disclaimer.duration_html')} />
+      <div class="bg-bg-alt/50 rounded-md border border-border p-4 leading-relaxed" set:html={t(lang, 'trial.disclaimer.no_card_html')} />
+    </div>
+
+    <div class="mt-12 max-w-2xl mx-auto">
+      <h2 class="text-lg font-semibold text-text mb-5">{t(lang, 'trial.what_next.title')}</h2>
+      <ol class="space-y-3.5 text-[14.5px] text-muted-strong leading-relaxed">
+        <li class="flex gap-3"><span class="font-mono text-brand text-[12px] mt-1.5 shrink-0">01</span><span set:html={t(lang, 'trial.what_next.step_1_html')} /></li>
+        <li class="flex gap-3"><span class="font-mono text-brand text-[12px] mt-1.5 shrink-0">02</span><span set:html={t(lang, 'trial.what_next.step_2_html')} /></li>
+        <li class="flex gap-3"><span class="font-mono text-brand text-[12px] mt-1.5 shrink-0">03</span><span set:html={t(lang, 'trial.what_next.step_3_html')} /></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script>
+
+<script
+  is:inline
+  define:vars={{
+    lang,
+    submitLabel: t(lang, 'trial.form.submit'),
+    submittingLabel: t(lang, 'trial.form.submitting'),
+    errorGeneric: t(lang, 'trial.form.error_generic'),
+    errorTurnstile: t(lang, 'trial.form.error_turnstile'),
+    errorRateLimit: t(lang, 'trial.form.error_rate_limit'),
+    errorDedupe: t(lang, 'trial.form.error_dedupe'),
+    successBodyHtml: t(lang, 'trial.success.body_html'),
+  }}
+>
+  let turnstileToken = null;
+
+  window.onTurnstileSuccess = (token) => {
+    turnstileToken = token;
+    hideError();
+  };
+  window.onTurnstileError = () => {
+    turnstileToken = null;
+  };
+  window.onTurnstileExpired = () => {
+    turnstileToken = null;
+  };
+
+  const form = document.getElementById('trial-form');
+  const wrapper = document.getElementById('trial-form-wrapper');
+  const success = document.getElementById('trial-success');
+  const errorBox = document.getElementById('trial-error');
+  const submitBtn = document.getElementById('trial-submit');
+  const submitLabelEl = document.getElementById('trial-submit-label');
+  const submitSpinner = document.getElementById('trial-submit-spinner');
+
+  const showError = (msg) => {
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+  };
+  const hideError = () => {
+    errorBox.textContent = '';
+    errorBox.classList.add('hidden');
+  };
+
+  const setSubmitting = (on) => {
+    submitBtn.disabled = on;
+    submitBtn.classList.toggle('opacity-60', on);
+    submitBtn.classList.toggle('cursor-not-allowed', on);
+    submitLabelEl.textContent = on ? submittingLabel : submitLabel;
+    submitSpinner.classList.toggle('hidden', !on);
+  };
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    hideError();
+
+    if (!turnstileToken) {
+      showError(errorTurnstile);
+      return;
+    }
+
+    const formData = new FormData(form);
+    const payload = {
+      name: String(formData.get('name') || '').trim(),
+      email: String(formData.get('email') || '').trim(),
+      company: String(formData.get('company') || '').trim() || null,
+      useCase: String(formData.get('useCase') || '').trim() || null,
+      lang,
+      turnstileToken,
+    };
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/trial', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const successBody = document.getElementById('trial-success-body');
+        successBody.innerHTML = successBodyHtml.replace(
+          '{email}',
+          `<span class="font-mono">${escapeHtml(payload.email)}</span>`,
+        );
+        wrapper.classList.add('hidden');
+        success.classList.remove('hidden');
+        success.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      let body = null;
+      try { body = await res.json(); } catch { /* non-JSON response */ }
+
+      if (res.status === 429) {
+        const code = body && body.code;
+        showError(code === 'dedupe' ? errorDedupe : errorRateLimit);
+      } else {
+        showError((body && body.message) || errorGeneric);
+      }
+      // Turnstile token is one-shot, force the user to re-solve.
+      if (window.turnstile && typeof window.turnstile.reset === 'function') {
+        window.turnstile.reset();
+      }
+      turnstileToken = null;
+    } catch (err) {
+      showError(errorGeneric);
+    } finally {
+      setSubmitting(false);
+    }
+  });
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+</script>
+</content>
+</invoke>

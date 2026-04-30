@@ -9,8 +9,9 @@
   "hero": {
     "title_html": "Une supervision SCADA web qui lit vos automates, historise, organise, alerte. Et reste <span class=\"text-brand\">ouverte à vos outils</span>.",
     "subtitle_html": "Wiregrid lit vos automates en <code>Modbus TCP</code>, <code>OPC-UA</code> et <code>BACnet/IP</code>, archive chaque mesure, et laisse Power BI, Grafana ou Excel s'y connecter directement. Pas de licence par tag. Pas de connecteur propriétaire.",
-    "cta_demo": "Voir la démo",
-    "cta_note_html": "Démo publique, pas d'inscription. Auth et résidence des données activées dès l'auto-hébergement.",
+    "cta_trial": "Essayer 7 jours sur mon infra",
+    "cta_demo": "Voir la démo en ligne",
+    "cta_note_html": "Essai 7 jours sans carte bancaire. Démo publique sans inscription pour un aperçu rapide.",
     "preview_label": "Démo live · valeurs simulées (push WebSocket dans la vraie démo)"
   },
   "app_preview": {
@@ -122,7 +123,7 @@
       "price": "990 €",
       "period": "/ an",
       "price_note": "par instance, points illimités",
-      "cta": "Demander un devis"
+      "cta": "Essayer 7 jours sur mon infra"
     },
     "feature": {
       "points_50": "Jusqu'à 50 points",
@@ -189,15 +190,67 @@
     },
     "trial": {
       "q": "Combien de temps pour tester sérieusement ?",
-      "a_html": "La démo en ligne fait office de POC instantané (60 secondes pour cliquer partout). Pour un essai sur votre matériel, prévoyez une à deux heures pour brancher un PLC et voir vos vrais points."
+      "a_html": "Trois portes d'entrée selon votre besoin. La démo en ligne sert de POC instantané (60 secondes pour cliquer partout). L'<a href=\"/fr/trial/\" class=\"text-brand hover:underline\">essai 7 jours</a> vous donne l'app complète à installer sur votre infra, avec vos automates, pour valider en conditions réelles. Au-delà, on bascule sur une licence production annuelle."
+    },
+    "trial_what_happens": {
+      "q": "Comment se passe l'essai 7 jours ?",
+      "a_html": "Vous remplissez le formulaire sur <a href=\"/fr/trial/\" class=\"text-brand hover:underline\">/fr/trial/</a>. Vous recevez immédiatement un email avec votre <code>license.jwt</code>, un <code>docker-compose.yml</code> prêt à l'emploi, et la commande d'installation. Vous lancez <code>docker compose up -d</code> sur votre serveur, vous branchez vos automates, vous explorez. Pas de carte bancaire, pas d'auto-renouvellement, pas d'inscription par-dessus."
+    },
+    "trial_end": {
+      "q": "Que devient mon installation à la fin des 7 jours ?",
+      "a_html": "L'app passe en lecture seule. Vous gardez l'accès à vos données historisées, vous pouvez exporter votre configuration et votre historian. Les écritures (ajout d'un point, modification d'une alarme, déploiement d'une révision) sont bloquées jusqu'à activation d'une licence production. Rien n'est supprimé, rien n'est volatil. Si vous souhaitez prolonger, écrivez à contact@wiregrid.fr."
     }
   },
   "final_cta": {
     "eyebrow": "Prêt à essayer ?",
-    "title": "Lancez la démo. 60 secondes pour vous faire une idée.",
-    "subtitle": "Aucune inscription. Données simulées d'un site industriel : 10 drivers, 13 machines, 18 alarmes. Cliquez où vous voulez.",
-    "cta": "Voir la démo en ligne",
+    "title": "Deux façons de tester. À votre rythme.",
+    "subtitle": "60 secondes sur la démo en ligne pour vous faire une idée. 7 jours sur votre infra avec vos automates pour valider sérieusement. Aucune inscription, aucune carte bancaire.",
+    "cta_trial": "Essayer 7 jours sur mon infra",
+    "cta_demo": "Voir la démo en ligne",
     "alt_cta": "Nous contacter"
+  },
+  "trial": {
+    "meta": {
+      "title": "Essai 7 jours · Wiregrid",
+      "description": "Recevez une licence d'essai 7 jours par email, lancez Wiregrid sur votre infra avec vos automates, validez en conditions réelles. Pas de carte bancaire, pas d'auto-renouvellement."
+    },
+    "eyebrow": "Essai 7 jours",
+    "title": "Wiregrid sur votre infra. 7 jours. Pas d'inscription.",
+    "subtitle_html": "Remplissez ce formulaire, recevez par email votre licence et un <code>docker-compose.yml</code> prêt à l'emploi. Vous lancez <code>docker compose up -d</code> sur votre serveur, vous branchez vos automates, vous validez en conditions réelles.",
+    "form": {
+      "name_label": "Nom",
+      "name_placeholder": "Votre nom",
+      "email_label": "Email professionnel",
+      "email_placeholder": "vous@société.fr",
+      "company_label": "Entreprise",
+      "company_optional": "facultatif",
+      "company_placeholder": "Votre société",
+      "use_case_label": "Cas d'usage",
+      "use_case_optional": "facultatif",
+      "use_case_placeholder": "Quel type de site, combien de points, quels automates...",
+      "submit": "Recevoir ma licence d'essai",
+      "submitting": "Envoi en cours...",
+      "error_generic": "Quelque chose a coincé. Réessayez ou écrivez à contact@wiregrid.fr.",
+      "error_turnstile": "Validez le challenge anti-bot avant d'envoyer.",
+      "error_rate_limit": "Vous avez déjà demandé une licence récemment. Réessayez dans 24 heures ou écrivez à contact@wiregrid.fr.",
+      "error_dedupe": "Une licence a déjà été émise pour cette adresse dans les 30 derniers jours. Vérifiez votre boîte mail (spam inclus) ou écrivez à contact@wiregrid.fr."
+    },
+    "disclaimer": {
+      "limits_html": "Limites de la licence d'essai : 5 drivers, 15 machines, 500 points, fonctionnalités complètes (acquisition, historian, alarmes, wiresheet, accès SQL).",
+      "duration_html": "Durée : 7 jours à compter de l'émission. À l'expiration, l'app passe en <strong>lecture seule</strong> : vos données restent vôtres, l'export reste actif.",
+      "no_card_html": "Aucune carte bancaire. Aucun auto-renouvellement. Pas d'envoi commercial automatique au-delà du suivi de cet essai."
+    },
+    "what_next": {
+      "title": "Ce qui arrive ensuite",
+      "step_1_html": "<strong>Immédiat :</strong> email avec <code>license.jwt</code>, <code>docker-compose.yml</code> et la commande d'install.",
+      "step_2_html": "<strong>J+6 :</strong> rappel 24h avant l'expiration, avec un lien Calendly si vous voulez en parler.",
+      "step_3_html": "<strong>J+7 :</strong> bilan post-essai. Continuer en production ou pas, à vous de voir."
+    },
+    "success": {
+      "title": "Vérifiez votre boîte mail",
+      "body_html": "On a envoyé un email à <strong class=\"font-mono\">{email}</strong> avec votre licence et la commande d'installation. Si rien n'arrive dans 5 minutes (spam inclus), écrivez à <a href=\"mailto:contact@wiregrid.fr\" class=\"text-brand hover:underline\">contact@wiregrid.fr</a>.",
+      "back": "Retour à l'accueil"
+    }
   },
   "footer": {
     "product": "Produit",
