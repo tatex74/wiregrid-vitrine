@@ -204,6 +204,42 @@ describe('handleTrialRequest — input validation', () => {
     expect(res.status).toBe(400);
     expect((await res.json()).code).toBe('bad-name');
   });
+
+  it('rejects an empty company (now required)', async () => {
+    const env = baseEnv();
+    const { fn: fetchImpl } = makeFetch();
+    const res = await handleTrialRequest(buildRequest({ ...validBody(), company: '   ' }), env, { fetch: fetchImpl });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('bad-company');
+  });
+
+  it('rejects a missing company (now required)', async () => {
+    const env = baseEnv();
+    const { fn: fetchImpl } = makeFetch();
+    const body = validBody();
+    delete (body as Record<string, unknown>).company;
+    const res = await handleTrialRequest(buildRequest(body), env, { fetch: fetchImpl });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('bad-company');
+  });
+
+  it('rejects an empty useCase (now required)', async () => {
+    const env = baseEnv();
+    const { fn: fetchImpl } = makeFetch();
+    const res = await handleTrialRequest(buildRequest({ ...validBody(), useCase: '' }), env, { fetch: fetchImpl });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('bad-use-case');
+  });
+
+  it('rejects a missing useCase (now required)', async () => {
+    const env = baseEnv();
+    const { fn: fetchImpl } = makeFetch();
+    const body = validBody();
+    delete (body as Record<string, unknown>).useCase;
+    const res = await handleTrialRequest(buildRequest(body), env, { fetch: fetchImpl });
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe('bad-use-case');
+  });
 });
 
 describe('handleTrialRequest — Turnstile', () => {

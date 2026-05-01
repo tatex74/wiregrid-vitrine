@@ -60,12 +60,12 @@ const turnstileSiteKey =
         <div class="mt-5">
           <label for="trial-company" class="block text-[13px] font-medium text-text mb-1.5">
             {t(lang, 'trial.form.company_label')}
-            <span class="ml-1 text-muted text-[12px] font-normal">({t(lang, 'trial.form.company_optional')})</span>
           </label>
           <input
             id="trial-company"
             name="company"
             type="text"
+            required
             autocomplete="organization"
             placeholder={t(lang, 'trial.form.company_placeholder')}
             class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
@@ -75,12 +75,12 @@ const turnstileSiteKey =
         <div class="mt-5">
           <label for="trial-use-case" class="block text-[13px] font-medium text-text mb-1.5">
             {t(lang, 'trial.form.use_case_label')}
-            <span class="ml-1 text-muted text-[12px] font-normal">({t(lang, 'trial.form.use_case_optional')})</span>
           </label>
           <textarea
             id="trial-use-case"
             name="useCase"
             rows="3"
+            required
             placeholder={t(lang, 'trial.form.use_case_placeholder')}
             class="w-full px-3.5 py-2.5 text-[15px] rounded-md border border-border-strong bg-bg text-text placeholder-muted focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 resize-none"
           ></textarea>
@@ -199,8 +199,8 @@ const turnstileSiteKey =
     const payload = {
       name: String(formData.get('name') || '').trim(),
       email: String(formData.get('email') || '').trim(),
-      company: String(formData.get('company') || '').trim() || null,
-      useCase: String(formData.get('useCase') || '').trim() || null,
+      company: String(formData.get('company') || '').trim(),
+      useCase: String(formData.get('useCase') || '').trim(),
       lang,
       turnstileToken,
     };

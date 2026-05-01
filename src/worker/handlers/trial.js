@@ -46,8 +46,8 @@ export async function handleTrialRequest(request, env, deps = {}) {
   }
   const name = (body.name ?? '').toString().trim();
   const email = normaliseEmail(body.email);
-  const company = body.company ? String(body.company).trim() : null;
-  const useCase = body.useCase ? String(body.useCase).trim() : null;
+  const company = (body.company ?? '').toString().trim();
+  const useCase = (body.useCase ?? '').toString().trim();
   const lang = body.lang === 'en' ? 'en' : 'fr';
   const turnstileToken = body.turnstileToken ?? null;
 
@@ -57,11 +57,11 @@ export async function handleTrialRequest(request, env, deps = {}) {
   if (!isValidEmail(email)) {
     return badRequest('bad-email', 'Email is invalid.');
   }
-  if (company && company.length > 200) {
-    return badRequest('bad-company', 'Company is too long.');
+  if (!company || company.length > 200) {
+    return badRequest('bad-company', 'Company is required (1..200 chars).');
   }
-  if (useCase && useCase.length > 2000) {
-    return badRequest('bad-use-case', 'Use case is too long.');
+  if (!useCase || useCase.length > 2000) {
+    return badRequest('bad-use-case', 'Use case is required (1..2000 chars).');
   }
 
   // 2. Identify the caller (CF-Connecting-IP is set on Cloudflare's edge,
