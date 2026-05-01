@@ -31,6 +31,15 @@ jobs:
 
       - name: Astro build
         run: npm run build
+        env:
+          # Public Turnstile siteKey, embedded in the static HTML at build
+          # time via import.meta.env.PUBLIC_TURNSTILE_SITE_KEY in
+          # src/components/TrialForm.astro. Posed as a GitHub Actions
+          # repository variable (not secret — value is public, visible
+          # in HTML). If unset, TrialForm.astro falls back to Cloudflare's
+          # always-pass test siteKey, which is fine for staging but should
+          # be set in prod.
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
