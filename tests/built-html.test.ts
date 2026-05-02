@@ -18,6 +18,8 @@ const pages = {
   en: resolve(dist, 'en', 'index.html'),
   fr_trial: resolve(dist, 'fr', 'trial', 'index.html'),
   en_trial: resolve(dist, 'en', 'trial', 'index.html'),
+  fr_about: resolve(dist, 'fr', 'about', 'index.html'),
+  en_about: resolve(dist, 'en', 'about', 'index.html'),
 };
 
 let html: Record<keyof typeof pages, string>;
@@ -36,6 +38,8 @@ beforeAll(() => {
     en: readFileSync(pages.en, 'utf-8'),
     fr_trial: readFileSync(pages.fr_trial, 'utf-8'),
     en_trial: readFileSync(pages.en_trial, 'utf-8'),
+    fr_about: readFileSync(pages.fr_about, 'utf-8'),
+    en_about: readFileSync(pages.en_about, 'utf-8'),
   };
 });
 
@@ -46,6 +50,10 @@ describe('Built pages exist and have a <title>', () => {
     });
     it(`${lang}/trial/index.html has a <title>`, () => {
       const key = `${lang}_trial` as keyof typeof html;
+      expect(html[key]).toMatch(/<title>[^<]+<\/title>/);
+    });
+    it(`${lang}/about/index.html has a <title>`, () => {
+      const key = `${lang}_about` as keyof typeof html;
       expect(html[key]).toMatch(/<title>[^<]+<\/title>/);
     });
   }
@@ -142,6 +150,170 @@ describe('Landing pages link to the trial page', () => {
   for (const lang of ['fr', 'en'] as const) {
     it(`${lang}/index.html links to /${lang}/trial/`, () => {
       expect(html[lang]).toMatch(new RegExp(`href="/${lang}/trial/"`));
+    });
+  }
+});
+
+describe('Personas section renders 4 cards (DSI persona added 2026-05-02)', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    function personasSection(): string {
+      const m = html[lang].match(/<section id="personas"[\s\S]*?<\/section>/);
+      if (!m) throw new Error(`personas section not found in ${lang}`);
+      return m[0];
+    }
+
+    it(`${lang} personas section renders exactly 4 articles`, () => {
+      const section = personasSection();
+      const articles = section.match(/<article\b/g) ?? [];
+      expect(articles).toHaveLength(4);
+    });
+
+    it(`${lang} personas section names the technical-director / DSI role`, () => {
+      const section = personasSection();
+      if (lang === 'fr') {
+        expect(section).toMatch(/DSI industriel|Direction technique/);
+      } else {
+        expect(section).toMatch(/Technical director|Industrial CIO/);
+      }
+    });
+  }
+});
+
+describe('Sovereignty section renders the four pillars (2026-05-02 brief axe 3)', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    function sovereigntySection(): string {
+      const m = html[lang].match(/<section id="sovereignty"[\s\S]*?<\/section>/);
+      if (!m) throw new Error(`sovereignty section not found in ${lang}`);
+      return m[0];
+    }
+
+    it(`${lang} sovereignty section is rendered`, () => {
+      // Throws if the section is missing.
+      const section = sovereigntySection();
+      expect(section.length).toBeGreaterThan(0);
+    });
+
+    it(`${lang} sovereignty section has exactly 4 cards`, () => {
+      const section = sovereigntySection();
+      const articles = section.match(/<article\b/g) ?? [];
+      expect(articles).toHaveLength(4);
+    });
+
+    it(`${lang} sovereignty section mentions GDPR + air-gap + French law`, () => {
+      const section = sovereigntySection();
+      expect(section).toMatch(/RGPD|GDPR/);
+      expect(section).toMatch(/air-gap/i);
+      if (lang === 'fr') {
+        expect(section).toMatch(/droit français|juridiction Paris/i);
+      } else {
+        expect(section).toMatch(/French law|courts in Paris/i);
+      }
+    });
+
+    it(`${lang} sovereignty section flags the Bruno placeholder for the registered city`, () => {
+      // The attribution line is the only entry in the section that
+      // depends on Bruno-side data. If this test fails AFTER Bruno
+      // fills in the city, drop the assertion.
+      const section = sovereigntySection();
+      expect(section).toMatch(/À COMPLÉTER PAR BRUNO|TO BE FILLED BY BRUNO/);
+    });
+  }
+});
+
+describe('FAQ has the four B2B-compliance entries from 2026-05-02 brief § 5', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    it(`${lang} FAQ exposes the sovereignty + GDPR + support-language + code-audit questions`, () => {
+      // FAQ entries land both in JSON-LD (re-quoted by AI search) and
+      // in the visible <details> list. Search for canonical terms
+      // pulled straight from the entry copy.
+      if (lang === 'fr') {
+        expect(html[lang]).toMatch(/Mes données restent-elles en France/);
+        expect(html[lang]).toMatch(/Wiregrid est-il conforme RGPD/);
+        expect(html[lang]).toMatch(/Le support est-il en français/);
+        expect(html[lang]).toMatch(/Puis-je auditer le code source/);
+      } else {
+        expect(html[lang]).toMatch(/Does my data stay in France/);
+        expect(html[lang]).toMatch(/Is Wiregrid GDPR compliant/);
+        expect(html[lang]).toMatch(/Is support in French/);
+        expect(html[lang]).toMatch(/Can I audit the source code/);
+      }
+    });
+  }
+});
+
+describe('About page has the founder + mission + coords sections', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    const key = `${lang}_about` as keyof typeof html;
+
+    it(`${lang} about page renders the five top-level sections`, () => {
+      // Five <h2> headings: founder, mission, values, timeline, coords.
+      const h2 = html[key].match(/<h2\b/g) ?? [];
+      expect(h2.length).toBeGreaterThanOrEqual(5);
+    });
+
+    it(`${lang} about page links back to home`, () => {
+      expect(html[key]).toMatch(new RegExp(`href="/${lang}/"`));
+    });
+
+    it(`${lang} about page exposes Bruno placeholders for company / address / SIREN`, () => {
+      // Anti-regression: ensure the placeholders are visible enough
+      // that a casual review catches them before merge to master.
+      const marker = lang === 'fr' ? 'À COMPLÉTER PAR BRUNO' : 'TO BE FILLED BY BRUNO';
+      expect(html[key]).toContain(marker);
+    });
+  }
+});
+
+describe('Footer carries the French-company attribution line', () => {
+  for (const lang of ['fr', 'en'] as const) {
+    it(`${lang} footer contains the france-line copy`, () => {
+      const footer = html[lang].match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+      if (lang === 'fr') {
+        expect(footer).toMatch(/Société française\. Données françaises\. Tech française\./);
+      } else {
+        expect(footer).toMatch(/French company\. French data\. French tech\./);
+      }
+    });
+  }
+});
+
+describe('Hard-rule lint on built HTML', () => {
+  const EM_DASH = '—';
+  const FORBIDDEN_NAMES = [
+    'Niagara',
+    'Ignition',
+    'EcoStruxure',
+    'Tridium',
+    'Inductive Automation',
+    'Workbench',
+    'JACE',
+  ];
+  const OPEN_SOURCE_PATTERNS = [/open[- ]source/i, /source[- ]available/i];
+
+  for (const key of [
+    'fr',
+    'en',
+    'fr_trial',
+    'en_trial',
+    'fr_about',
+    'en_about',
+  ] as const) {
+    it(`${key} contains no em-dash`, () => {
+      expect(html[key]).not.toContain(EM_DASH);
+    });
+
+    it(`${key} contains no banned competitor name`, () => {
+      for (const name of FORBIDDEN_NAMES) {
+        expect(html[key], `banned name "${name}" in ${key}`).not.toMatch(
+          new RegExp(`\\b${name}\\b`),
+        );
+      }
+    });
+
+    it(`${key} does not mention "open source" or "source available"`, () => {
+      for (const pattern of OPEN_SOURCE_PATTERNS) {
+        expect(html[key]).not.toMatch(pattern);
+      }
     });
   }
 });
