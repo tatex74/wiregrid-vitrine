@@ -84,8 +84,8 @@
       "desc_html": "Conditions <code>high</code> / <code>low</code> avec seuil, deadband et délai. Sévérités <code>info / warning / critical</code>. Notifications email par groupe d'utilisateurs. Journal complet pour la traçabilité."
     },
     "wiresheet": {
-      "title": "Calcul & transformation de signal",
-      "desc_html": "Scale et offset sur les points, points calculés (<code>DeltaT = SupplyTemp − ReturnTemp</code>), logique programmable visuelle à blocs fonctionnels reliés par des fils : math, comparaison, timer, schedule, latch, ramp, PID. Le moteur d'exécution tourne déjà. L'éditeur visuel arrive en <strong>Q3 2026</strong>.",
+      "title": "Logique métier en temps réel",
+      "desc_html": "<strong>Le moteur wiresheet tourne dès aujourd'hui</strong> : math, logique, comparaison, timer, schedule, latch, ramp, PID, alarme. Vous éditez les graphes via l'API REST ou en JSON versionné, revert en un clic. <strong>L'éditeur visuel drag-and-drop arrive en Q3 2026</strong> (palette de blocs, connexions à la souris). Pour les early adopters techniques, le pipeline API + JSON suffit dès maintenant.",
       "mock_label": "Wiresheet · DeltaT computed point"
     },
     "open_data": {
@@ -238,7 +238,7 @@
     },
     "wiresheet_status": {
       "q": "Le wiresheet (logique visuelle), c'est pour quand ?",
-      "a_html": "Le moteur d'exécution est déjà dans le runtime. L'éditeur Vue Flow (palette de blocs, drag-drop, connexions) est prévu pour <strong>Q3 2026</strong>. En attendant, scale/offset et points calculés simples sont configurables dans l'UI."
+      "a_html": "Le moteur d'exécution tourne déjà dans le runtime, avec tous les blocs (math, logique, comparaison, timer, schedule, latch, ramp, PID, alarme). Aujourd'hui, vous l'éditez via l'<code>API REST</code> ou en <code>JSON versionné</code> (revert en un clic). L'éditeur visuel Vue Flow (palette de blocs, drag-and-drop, connexions à la souris) est prévu pour <strong>Q3 2026</strong>."
     },
     "support": {
       "q": "À quoi ressemble le support ?",

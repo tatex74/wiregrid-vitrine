@@ -84,8 +84,8 @@
       "desc_html": "<code>high</code> / <code>low</code> conditions with threshold, deadband and delay. Severities <code>info / warning / critical</code>. Email notifications via user groups. Full event log for traceability."
     },
     "wiresheet": {
-      "title": "Signal compute & transformation",
-      "desc_html": "Scale and offset on points, computed points (<code>DeltaT = SupplyTemp − ReturnTemp</code>), visual programmable logic with functional blocks wired together: math, comparison, timer, schedule, latch, ramp, PID. The execution engine already runs. The visual editor lands in <strong>Q3 2026</strong>.",
+      "title": "Real-time business logic",
+      "desc_html": "<strong>The wiresheet engine runs today</strong>: math, logic, comparison, timer, schedule, latch, ramp, PID, alarm. You edit graphs via the REST API or as versioned JSON, with one-click revert. <strong>The drag-and-drop visual editor lands in Q3 2026</strong> (block palette, mouse-driven connections). For technical early adopters, the API + JSON pipeline is sufficient today.",
       "mock_label": "Wiresheet · DeltaT computed point"
     },
     "open_data": {
@@ -238,7 +238,7 @@
     },
     "wiresheet_status": {
       "q": "When does the wiresheet (visual logic) ship?",
-      "a_html": "The execution engine is already in the runtime. The Vue Flow editor (block palette, drag-drop, links) is targeted for <strong>Q3 2026</strong>. In the meantime, scale/offset and simple computed points are configurable in the UI."
+      "a_html": "The execution engine already runs in the runtime, with the full block set (math, logic, comparison, timer, schedule, latch, ramp, PID, alarm). Today you edit it via the <code>REST API</code> or as <code>versioned JSON</code> (one-click revert). The Vue Flow visual editor (block palette, drag-and-drop, mouse-driven connections) is targeted for <strong>Q3 2026</strong>."
     },
     "support": {
       "q": "What does support look like?",
