@@ -31,8 +31,8 @@
   },
   "personas": {
     "eyebrow": "Pour qui",
-    "title": "Trois profils, un produit.",
-    "subtitle": "Wiregrid est pensé pour des sites industriels et tertiaires de 50 à 500 points. Si vous reconnaissez votre quotidien dans un de ces trois cadres, on est faits pour vous parler.",
+    "title": "Quatre profils, un produit.",
+    "subtitle": "Wiregrid est conçu pour des sites industriels et tertiaires de 50 à 500 points. Si vous reconnaissez votre quotidien dans un de ces quatre cadres, on est faits pour vous parler.",
     "p1": {
       "role": "Responsable maintenance / facility manager",
       "context": "Vous gérez un ou plusieurs bâtiments : usine, siège, site logistique.",
@@ -50,6 +50,12 @@
       "context": "Vous suivez la conso d'un site ou d'un parc, vous devez livrer des rapports ISO 50001 ou un bilan carbone.",
       "pain": "Les compteurs Modbus sont là, mais les remonter dans Power BI demande un budget connecteur ou un développement spécifique.",
       "fit": "Lecture native des compteurs Modbus / OPC-UA, historian configurable, vues SQL directes pour vos dashboards énergie."
+    },
+    "p4": {
+      "role": "Direction technique / DSI industriel",
+      "context": "Vous consolidez la supervision sur plusieurs sites, vous arbitrez les renouvellements de licences, vous tenez le budget et la conformité.",
+      "pain": "Chaque licence par usine atteint 10 à 50 k€/an. Le budget est imprévisible, les données sont dispersées entre fournisseurs, l'audit RGPD prend du temps à chaque renouvellement.",
+      "fit": "Forfait fixe 990 €/an par site, données dans votre Postgres, conforme RGPD by design, support sous 24h ouvrées. Audit code sous NDA disponible pour les exigences de conformité spécifiques. Budget prévisible sur 5 ans."
     }
   },
   "stats": {

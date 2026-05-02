@@ -7,7 +7,7 @@ interface Props {
 
 const { lang } = Astro.props;
 
-const personas = ['p1', 'p2', 'p3'] as const;
+const personas = ['p1', 'p2', 'p3', 'p4'] as const;
 ---
 
 <section id="personas" class="px-6 py-24 md:py-32 border-t border-border/60">
@@ -18,7 +18,7 @@ const personas = ['p1', 'p2', 'p3'] as const;
       <p class="section-lede mx-auto">{t(lang, 'personas.subtitle')}</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       {personas.map((id) => (
         <article class="bg-surface rounded-lg border border-border p-7 flex flex-col">
           <h3 class="font-semibold text-text text-[17px] tracking-tight mb-3">

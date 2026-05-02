@@ -31,8 +31,8 @@
   },
   "personas": {
     "eyebrow": "For whom",
-    "title": "Three roles. One product.",
-    "subtitle": "Wiregrid is built for industrial and commercial sites of 50 to 500 points. If your day-to-day looks like one of these, we should probably talk.",
+    "title": "Four roles. One product.",
+    "subtitle": "Wiregrid is built for industrial and commercial sites of 50 to 500 points. If your day-to-day looks like one of these four, we should probably talk.",
     "p1": {
       "role": "Maintenance / facility manager",
       "context": "You run one or several buildings: factory, head office, logistics site.",
@@ -50,6 +50,12 @@
       "context": "You track consumption across a site or a fleet, you have to deliver ISO 50001 reports or carbon footprints.",
       "pain": "Modbus meters are right there, but pulling them into Power BI requires a connector budget or custom development.",
       "fit": "Native Modbus / OPC-UA reads, configurable historian, direct SQL views for your energy dashboards."
+    },
+    "p4": {
+      "role": "Technical director / Industrial CIO",
+      "context": "You consolidate supervision across multiple sites, decide on licence renewals, hold the line on budget and compliance.",
+      "pain": "Each per-plant licence reaches €10k to €50k a year. Budget is unpredictable, data scattered across vendors, GDPR audit slow at every renewal.",
+      "fit": "Flat €990/year per site, data in your Postgres, GDPR compliant by design, support within one business day. Source-code audit under NDA available for specific compliance needs. Predictable budget over 5 years."
     }
   },
   "stats": {
