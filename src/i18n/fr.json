@@ -93,6 +93,30 @@
       "desc_html": "Power BI, Grafana, Metabase, Excel ou <code>psql</code> : compatibilité native <code>ODBC PostgreSQL</code>. Vos équipes BI construisent leurs dashboards directement, sans dépendance IT-industrielle."
     }
   },
+  "bi_preview": {
+    "eyebrow": "Vos données dans vos outils",
+    "title": "Power BI, Grafana, Excel : connexion ODBC native.",
+    "subtitle": "Aucun connecteur propriétaire. Vos équipes BI lisent directement dans Postgres, comme pour n'importe quelle autre base de l'entreprise.",
+    "dashboard_title": "Dashboard énergie · Site Lyon",
+    "live_label": "Live · ODBC PostgreSQL",
+    "kpi": {
+      "energy_label": "Énergie 24h",
+      "meters_label": "Compteurs en ligne",
+      "alarms_label": "Alarmes actives",
+      "alarms_sub": "1 critique"
+    },
+    "chart_title": "Température air soufflage AHU1 · 24 h",
+    "chart_unit": "°C",
+    "points_title": "Derniers points lus",
+    "points_source": "table point_history (TimescaleDB)",
+    "col": {
+      "path": "Path",
+      "value": "Valeur",
+      "unit": "Unité",
+      "trend": "Tendance"
+    },
+    "attribution_html": "Visualisation indicative. Données live depuis Wiregrid via <strong>ODBC PostgreSQL standard</strong>. Aucun connecteur propriétaire à installer."
+  },
   "lifecycle": {
     "eyebrow": "Organisation & versioning",
     "title": "Vos sites évoluent. Wiregrid évolue avec eux.",

@@ -1,0 +1,157 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+// Static mockup of a BI dashboard wired to Wiregrid via ODBC. No real
+// data, no real client logos. Pattern follows Linear / Vercel
+// "frame the product on the marketing page" approach: a self-contained
+// neutral-light window on the warm light page, mimicking what a
+// Power BI / Grafana board fed by Wiregrid Postgres looks like.
+//
+// Bruno can later replace this component with a real screenshot once a
+// customer consents (axe 5a brief 2026-05-02). The Astro/CSS path
+// stays the default to keep the page light and the dimensions stable.
+
+// Latest-points table content. Five rows, plausible HVAC + energy
+// payload that matches the demo dataset's vocabulary.
+const points = [
+  { path: 'AHU1/SupplyTemp',     value: '16.8',  unit: '°C',     trend: 'up'   },
+  { path: 'AHU1/ReturnTemp',     value: '22.3',  unit: '°C',     trend: 'flat' },
+  { path: 'Boiler/Pressure',     value: '2.1',   unit: 'bar',    trend: 'down' },
+  { path: 'Site/EnergyHourly',   value: '89.2',  unit: 'kWh/h',  trend: 'up'   },
+  { path: 'CHW/FlowRate',        value: '245',   unit: 'm³/h',   trend: 'flat' },
+];
+
+// SVG line chart, 24-hour synthetic profile for an air-supply temperature
+// (cooler at night, ramp at 6h, plateau, ramp down at 19h). Coordinates
+// are precomputed so the SVG stays static and small.
+const chartPoints = [
+  [10, 56], [30, 58], [50, 60], [70, 62], [90, 60], [110, 56],
+  [130, 50], [150, 42], [170, 36], [190, 32], [210, 30], [230, 28],
+  [250, 28], [270, 30], [290, 32], [310, 36], [330, 40], [350, 46],
+  [370, 50], [390, 54], [410, 56], [430, 58], [450, 60], [470, 62],
+];
+const polylinePoints = chartPoints.map((p) => p.join(',')).join(' ');
+const areaPoints = `0,80 ${polylinePoints} 480,80`;
+---
+
+<section id="bi-preview" class="px-6 py-24 md:py-32">
+  <div class="mx-auto max-w-6xl">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="section-eyebrow justify-center">{t(lang, 'bi_preview.eyebrow')}</div>
+      <h2 class="section-title">{t(lang, 'bi_preview.title')}</h2>
+      <p class="section-lede mx-auto">{t(lang, 'bi_preview.subtitle')}</p>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto">
+      <div class="absolute -inset-4 rounded-[20px] bg-gradient-to-br from-brand/10 via-transparent to-transparent blur-2xl pointer-events-none" aria-hidden="true"></div>
+
+      <div class="relative rounded-xl border border-border-strong bg-surface overflow-hidden shadow-sm">
+        <!-- Title bar mimicking a BI tool frame -->
+        <div class="flex items-center justify-between px-5 py-2.5 border-b border-border bg-bg-alt/60">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#E5E5E0;"></span>
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#E5E5E0;"></span>
+              <span class="w-2.5 h-2.5 rounded-full" style="background:#E5E5E0;"></span>
+            </div>
+            <span class="ml-3 text-[12px] font-mono text-muted">{t(lang, 'bi_preview.dashboard_title')}</span>
+          </div>
+          <span class="text-[11px] font-mono uppercase tracking-wider text-muted">{t(lang, 'bi_preview.live_label')}</span>
+        </div>
+
+        <div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-4">
+          <!-- KPIs -->
+          <div class="md:col-span-5 grid grid-cols-3 gap-3">
+            <div class="rounded-md border border-border bg-bg-alt/50 p-3 flex flex-col">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-muted">{t(lang, 'bi_preview.kpi.energy_label')}</span>
+              <span class="mt-1 text-[26px] font-semibold tracking-[-0.02em] text-text tabular-nums">1 247</span>
+              <span class="text-[11px] text-muted-strong">kWh</span>
+            </div>
+            <div class="rounded-md border border-border bg-bg-alt/50 p-3 flex flex-col">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-muted">{t(lang, 'bi_preview.kpi.meters_label')}</span>
+              <span class="mt-1 text-[26px] font-semibold tracking-[-0.02em] text-text tabular-nums">18</span>
+              <span class="text-[11px]" style="color:#059669;">/ 18</span>
+            </div>
+            <div class="rounded-md border border-border bg-bg-alt/50 p-3 flex flex-col">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-muted">{t(lang, 'bi_preview.kpi.alarms_label')}</span>
+              <span class="mt-1 text-[26px] font-semibold tracking-[-0.02em] tabular-nums" style="color:#D97706;">3</span>
+              <span class="text-[11px] text-muted-strong">{t(lang, 'bi_preview.kpi.alarms_sub')}</span>
+            </div>
+          </div>
+
+          <!-- Time-series chart -->
+          <div class="md:col-span-7 rounded-md border border-border bg-bg-alt/50 p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[12px] font-medium text-text">{t(lang, 'bi_preview.chart_title')}</span>
+              <span class="text-[11px] font-mono text-muted">{t(lang, 'bi_preview.chart_unit')}</span>
+            </div>
+            <svg viewBox="0 0 480 100" class="w-full h-32" fill="none" aria-hidden="true">
+              <!-- Y-axis grid lines -->
+              <g stroke="#E5E5E0" stroke-width="1">
+                <line x1="0" y1="20" x2="480" y2="20" />
+                <line x1="0" y1="40" x2="480" y2="40" />
+                <line x1="0" y1="60" x2="480" y2="60" />
+                <line x1="0" y1="80" x2="480" y2="80" />
+              </g>
+              <!-- Filled area under the curve -->
+              <polygon points={areaPoints} fill="#06B6D4" fill-opacity="0.08" />
+              <!-- Curve -->
+              <polyline points={polylinePoints} stroke="#06B6D4" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" />
+              <!-- Last-point marker -->
+              <circle cx="470" cy="62" r="3" fill="#06B6D4" />
+              <circle cx="470" cy="62" r="6" fill="#06B6D4" fill-opacity="0.18" />
+              <!-- X-axis labels -->
+              <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" fill="#64748B">
+                <text x="0"   y="98">00h</text>
+                <text x="115" y="98">06h</text>
+                <text x="230" y="98">12h</text>
+                <text x="345" y="98">18h</text>
+                <text x="455" y="98">24h</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Latest points table -->
+          <div class="md:col-span-12 rounded-md border border-border bg-bg-alt/50 p-3">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[12px] font-medium text-text">{t(lang, 'bi_preview.points_title')}</span>
+              <span class="text-[11px] font-mono text-muted">{t(lang, 'bi_preview.points_source')}</span>
+            </div>
+            <table class="w-full text-[12.5px]">
+              <thead>
+                <tr class="text-muted text-left border-b border-border">
+                  <th class="font-mono font-normal text-[10px] uppercase tracking-wider py-1.5">{t(lang, 'bi_preview.col.path')}</th>
+                  <th class="font-mono font-normal text-[10px] uppercase tracking-wider py-1.5 text-right">{t(lang, 'bi_preview.col.value')}</th>
+                  <th class="font-mono font-normal text-[10px] uppercase tracking-wider py-1.5 text-right">{t(lang, 'bi_preview.col.unit')}</th>
+                  <th class="font-mono font-normal text-[10px] uppercase tracking-wider py-1.5 text-right">{t(lang, 'bi_preview.col.trend')}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border/70">
+                {points.map((p) => (
+                  <tr>
+                    <td class="font-mono text-text py-1.5">{p.path}</td>
+                    <td class="text-right text-text tabular-nums py-1.5">{p.value}</td>
+                    <td class="text-right text-muted-strong py-1.5">{p.unit}</td>
+                    <td class="text-right py-1.5">
+                      {p.trend === 'up' && (<span style="color:#059669;" class="font-mono">▲</span>)}
+                      {p.trend === 'down' && (<span style="color:#DC2626;" class="font-mono">▼</span>)}
+                      {p.trend === 'flat' && (<span class="text-muted font-mono">─</span>)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-5 text-center text-[12.5px] text-muted" set:html={t(lang, 'bi_preview.attribution_html')} />
+    </div>
+  </div>
+</section>
