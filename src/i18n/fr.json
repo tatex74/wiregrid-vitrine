@@ -7,12 +7,12 @@
     "demo": "Voir la démo"
   },
   "hero": {
-    "title_html": "Une supervision SCADA web qui lit vos automates, historise, organise, alerte. Et reste <span class=\"text-brand\">ouverte à vos outils</span>.",
-    "subtitle_html": "Wiregrid lit vos automates en <code>Modbus TCP</code>, <code>OPC-UA</code> et <code>BACnet/IP</code>, archive chaque mesure, et laisse Power BI, Grafana ou Excel s'y connecter directement. Pas de licence par tag. Pas de connecteur propriétaire.",
+    "title_html": "Supervision industrielle moderne. <span class=\"text-brand\">Forfait fixe, données chez vous.</span>",
+    "subtitle_html": "Wiregrid lit vos automates en <code>Modbus TCP</code>, <code>OPC-UA</code> et <code>BACnet/IP</code>. Toutes les mesures dans votre Postgres, exploitables par Power BI, Grafana ou Excel. Une licence annuelle inclut tout : protocoles, points illimités, mises à jour, support en français.",
     "cta_trial": "Essayer 7 jours sur mon infra",
     "cta_demo": "Voir la démo en ligne",
-    "cta_note_html": "Essai 7 jours sans carte bancaire. Démo publique sans inscription pour un aperçu rapide.",
-    "preview_label": "Démo live · valeurs simulées (push WebSocket dans la vraie démo)"
+    "cta_note_html": "990 €/an par site. Essai 7 jours sans carte bancaire. Démo publique sans inscription pour un aperçu immédiat.",
+    "preview_label": "Aperçu UI · valeurs simulées (push WebSocket dans la démo)"
   },
   "app_preview": {
     "aria_label": "Aperçu de l'interface Wiregrid : table de points en temps réel",

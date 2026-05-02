@@ -7,12 +7,12 @@
     "demo": "See the demo"
   },
   "hero": {
-    "title_html": "A web SCADA platform that reads your PLCs, historises, organises, alerts. And stays <span class=\"text-brand\">open to your tools</span>.",
-    "subtitle_html": "Wiregrid reads your PLCs over <code>Modbus TCP</code>, <code>OPC-UA</code> and <code>BACnet/IP</code>, archives every measurement, and lets Power BI, Grafana or Excel connect directly. No per-tag licensing. No proprietary connector.",
+    "title_html": "Modern industrial supervision. <span class=\"text-brand\">Flat fee, data on your turf.</span>",
+    "subtitle_html": "Wiregrid reads your PLCs over <code>Modbus TCP</code>, <code>OPC-UA</code> and <code>BACnet/IP</code>. All measurements in standard PostgreSQL, accessible to Power BI, Grafana or Excel. One yearly licence includes everything: protocols, unlimited points, updates, support.",
     "cta_trial": "Try 7 days on my infra",
     "cta_demo": "See the live demo",
-    "cta_note_html": "7-day trial, no credit card. Public demo without sign-up for a quick look.",
-    "preview_label": "Live demo · simulated values (real WebSocket push in the actual demo)"
+    "cta_note_html": "€990/year per site. 7-day trial, no credit card. Public demo without sign-up for an immediate look.",
+    "preview_label": "UI preview · simulated values (real WebSocket push in the actual demo)"
   },
   "app_preview": {
     "aria_label": "Wiregrid interface preview: live points table",
