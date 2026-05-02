@@ -132,7 +132,7 @@
       "title": "Pas de Cloud Act, pas de cloud étranger",
       "body_html": "Aucune dépendance fournisseur cloud étranger côté production. Hors d'atteinte de l'extra-territorialité USA et des injonctions tierces."
     },
-    "attribution_html": "Société française enregistrée à <strong>&lt;VILLE — À COMPLÉTER PAR BRUNO&gt;</strong>."
+    "attribution_html": "Société française enregistrée à <strong>&lt;VILLE : À COMPLÉTER PAR BRUNO&gt;</strong>."
   },
   "pricing": {
     "eyebrow": "Tarifs",
@@ -383,7 +383,7 @@
     "compat": "Compatibilité",
     "contact": "Contact",
     "rights": "Tous droits réservés.",
-    "france_line_html": "Société française. Données françaises. Tech française. <strong>&lt;RAISON SOCIALE — À COMPLÉTER PAR BRUNO&gt;</strong> à <strong>&lt;VILLE — À COMPLÉTER PAR BRUNO&gt;</strong>.",
+    "france_line_html": "Société française. Données françaises. Tech française. <strong>&lt;RAISON SOCIALE : À COMPLÉTER PAR BRUNO&gt;</strong> à <strong>&lt;VILLE : À COMPLÉTER PAR BRUNO&gt;</strong>.",
     "tagline": "Une supervision SCADA web qui lit vos automates, historise, organise et alerte. Données accessibles en PostgreSQL standard via ODBC.",
     "newsletter_title": "Newsletter trimestrielle",
     "newsletter_desc": "Roadmap, retours d'expérience d'intégrateurs, nouveautés. 4 envois par an, pas plus.",

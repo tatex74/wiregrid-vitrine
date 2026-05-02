@@ -69,7 +69,7 @@ export async function handleTrialRequest(request, env, deps = {}) {
   const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Real-IP') || 'unknown';
 
   // 3. Turnstile (skipped only if TURNSTILE_SECRET_KEY is missing AND the
-  //    body explicitly carries a non-empty token — keeps prod strict but
+  //    body explicitly carries a non-empty token. Keeps prod strict but
   //    lets local wrangler dev work when the operator hasn't put the
   //    secret yet, as long as the form sent something).
   if (env.TURNSTILE_SECRET_KEY) {

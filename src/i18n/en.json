@@ -132,7 +132,7 @@
       "title": "No US Cloud Act, no foreign cloud",
       "body_html": "No foreign cloud-vendor dependency on the production path. Out of reach of US extra-territorial reach and third-party injunctions."
     },
-    "attribution_html": "French company registered in <strong>&lt;CITY — TO BE FILLED BY BRUNO&gt;</strong>."
+    "attribution_html": "French company registered in <strong>&lt;CITY : TO BE FILLED BY BRUNO&gt;</strong>."
   },
   "pricing": {
     "eyebrow": "Pricing",
@@ -383,7 +383,7 @@
     "compat": "Compatibility",
     "contact": "Contact",
     "rights": "All rights reserved.",
-    "france_line_html": "French company. French data. French tech. <strong>&lt;COMPANY NAME — TO BE FILLED BY BRUNO&gt;</strong> in <strong>&lt;CITY — TO BE FILLED BY BRUNO&gt;</strong>.",
+    "france_line_html": "French company. French data. French tech. <strong>&lt;COMPANY NAME : TO BE FILLED BY BRUNO&gt;</strong> in <strong>&lt;CITY : TO BE FILLED BY BRUNO&gt;</strong>.",
     "tagline": "A web SCADA platform that reads your PLCs, historises, organises and alerts. Data accessible via standard PostgreSQL ODBC.",
     "newsletter_title": "Quarterly newsletter",
     "newsletter_desc": "Roadmap, integrator stories, releases. Four sends a year, no more.",
