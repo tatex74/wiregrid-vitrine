@@ -177,10 +177,11 @@
       "standard_unlimited": "Unlimited points and machines in practice",
       "standard_protocols": "Modbus TCP + OPC-UA + BACnet/IP",
       "standard_features": "Historian, alarms, wiresheet, SQL access, API",
+      "standard_deployment": "Docker deployment in 4 h, first point in 30 min",
       "standard_install": "One instance per licence, on your infrastructure",
       "standard_updates": "Updates included for the year",
-      "standard_support": "Email support at <code>contact@wiregrid.fr</code>",
-      "standard_renewal": "Annual renewal at €990/year"
+      "standard_support": "Email support with a <strong>1-business-day SLA</strong> (FR public holidays excluded)",
+      "standard_audit_nda": "Source-code audit under NDA (on request)"
     }
   },
   "faq": {
