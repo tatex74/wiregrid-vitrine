@@ -186,7 +186,9 @@
       "price": "990 €",
       "period": "/ an",
       "price_note": "par instance, mises à jour incluses",
-      "cta": "Nous contacter"
+      "cta": "Nous contacter",
+      "legal_anchor": "Société française enregistrée. Données et support sous droit français.",
+      "continuity_link": "Et si vous fermez demain ? Lire la réponse honnête."
     },
     "feature": {
       "demo_no_install": "Aperçu sans installation",
@@ -407,7 +409,9 @@
     "compat": "Compatibilité",
     "contact": "Contact",
     "rights": "Tous droits réservés.",
-    "france_line_html": "Société française. Données françaises. Tech française. <strong>&lt;RAISON SOCIALE : À COMPLÉTER PAR BRUNO&gt;</strong> à <strong>&lt;VILLE : À COMPLÉTER PAR BRUNO&gt;</strong>.",
+    "legal_box_html": "Wiregrid by <strong>&lt;RAISON SOCIALE : À COMPLÉTER PAR BRUNO&gt;</strong>, société française enregistrée à <strong>&lt;VILLE : À COMPLÉTER PAR BRUNO&gt;</strong>. SIREN <strong>&lt;NUMÉRO : À COMPLÉTER PAR BRUNO&gt;</strong>.",
+    "continuity_link": "Et si vous fermez demain ? La réponse honnête est dans la FAQ.",
+    "tech_line": "Données françaises. Tech française.",
     "tagline": "Une supervision SCADA web qui lit vos automates, historise, organise et alerte. Données accessibles en PostgreSQL standard via ODBC.",
     "newsletter_title": "Newsletter trimestrielle",
     "newsletter_desc": "Roadmap, retours d'expérience d'intégrateurs, nouveautés. 4 envois par an, pas plus.",

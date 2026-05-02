@@ -19,7 +19,7 @@ const { lang } = Astro.props;
 
     <div class="bg-surface rounded-lg border border-border divide-y divide-border overflow-hidden">
       {FAQ_KEYS.map((key) => (
-        <details class="group">
+        <details id={`faq-${key}`} class="group">
           <summary class="flex items-start gap-4 cursor-pointer list-none px-6 py-5 hover:bg-bg-alt/40 transition-colors">
             <svg
               class="w-4 h-4 mt-[3px] shrink-0 text-muted-strong group-open:text-brand group-open:rotate-45 transition-all"
@@ -43,3 +43,22 @@ const { lang } = Astro.props;
     </div>
   </div>
 </section>
+
+<script is:inline>
+  // Auto-open a FAQ <details> when the URL hash matches its id.
+  // Used by deep-links like /<lang>/#faq-company_disappears so callers
+  // can land directly on the answer without an extra click.
+  (function () {
+    function applyHash() {
+      var hash = window.location.hash;
+      if (!hash || hash.indexOf('#faq-') !== 0) return;
+      var el = document.getElementById(hash.slice(1));
+      if (el && el.tagName === 'DETAILS') {
+        el.open = true;
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+  })();
+</script>

@@ -264,14 +264,36 @@ describe('About page has the founder + mission + coords sections', () => {
   }
 });
 
-describe('Footer carries the French-company attribution line', () => {
+describe('Footer carries the French-company attribution and continuity link', () => {
   for (const lang of ['fr', 'en'] as const) {
-    it(`${lang} footer contains the france-line copy`, () => {
-      const footer = html[lang].match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+    function footer(): string {
+      return html[lang].match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+    }
+
+    it(`${lang} footer surfaces a legal box (company + city + SIREN) above the bottom row`, () => {
+      const f = footer();
+      // The legal box lives in col-1 of the footer (Brand + tagline +
+      // legal anchor) and carries Bruno placeholders until filled.
+      expect(f).toMatch(/société française enregistrée|French company registered/);
+      expect(f).toMatch(/SIREN/);
+    });
+
+    it(`${lang} footer carries the 'what if you shut down' continuity link to faq.company_disappears`, () => {
+      const f = footer();
+      expect(f).toContain(`href="/${lang}/#faq-company_disappears"`);
       if (lang === 'fr') {
-        expect(footer).toMatch(/Société française\. Données françaises\. Tech française\./);
+        expect(f).toMatch(/Et si vous fermez demain/);
       } else {
-        expect(footer).toMatch(/French company\. French data\. French tech\./);
+        expect(f).toMatch(/What if you shut down tomorrow/);
+      }
+    });
+
+    it(`${lang} footer bottom row keeps a French-tech tagline`, () => {
+      const f = footer();
+      if (lang === 'fr') {
+        expect(f).toMatch(/Données françaises\. Tech française\./);
+      } else {
+        expect(f).toMatch(/French data\. French tech\./);
       }
     });
   }
@@ -337,6 +359,18 @@ describe('Pricing section renders 3 tiers per ADR-0008', () => {
       expect(section).toContain('href="https://demo.wiregrid.fr"');
       expect(section).toContain(`href="/${lang}/trial/"`);
       expect(section).toContain('href="mailto:contact@wiregrid.fr?subject=Wiregrid%20Standard"');
+    });
+
+    it(`${lang} pricing Standard tier carries the legal anchor + continuity link`, () => {
+      const section = pricingSection();
+      if (lang === 'fr') {
+        expect(section).toMatch(/Société française enregistrée\. Données et support sous droit français\./);
+        expect(section).toMatch(/Et si vous fermez demain/);
+      } else {
+        expect(section).toMatch(/French registered company\. Data and support under French law\./);
+        expect(section).toMatch(/What if you shut down tomorrow/);
+      }
+      expect(section).toContain(`href="/${lang}/#faq-company_disappears"`);
     });
 
     it(`${lang} pricing no longer references the obsolete free-forever 50-points tier`, () => {

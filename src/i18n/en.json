@@ -186,7 +186,9 @@
       "price": "€990",
       "period": "/ year",
       "price_note": "per instance, updates included",
-      "cta": "Get in touch"
+      "cta": "Get in touch",
+      "legal_anchor": "French registered company. Data and support under French law.",
+      "continuity_link": "What if you shut down tomorrow? Read the honest answer."
     },
     "feature": {
       "demo_no_install": "Preview without installing",
@@ -407,7 +409,9 @@
     "compat": "Compatibility",
     "contact": "Contact",
     "rights": "All rights reserved.",
-    "france_line_html": "French company. French data. French tech. <strong>&lt;COMPANY NAME : TO BE FILLED BY BRUNO&gt;</strong> in <strong>&lt;CITY : TO BE FILLED BY BRUNO&gt;</strong>.",
+    "legal_box_html": "Wiregrid by <strong>&lt;COMPANY NAME : TO BE FILLED BY BRUNO&gt;</strong>, French company registered in <strong>&lt;CITY : TO BE FILLED BY BRUNO&gt;</strong>. SIREN <strong>&lt;NUMBER : TO BE FILLED BY BRUNO&gt;</strong>.",
+    "continuity_link": "What if you shut down tomorrow? The honest answer lives in the FAQ.",
+    "tech_line": "French data. French tech.",
     "tagline": "A web SCADA platform that reads your PLCs, historises, organises and alerts. Data accessible via standard PostgreSQL ODBC.",
     "newsletter_title": "Quarterly newsletter",
     "newsletter_desc": "Roadmap, integrator stories, releases. Four sends a year, no more.",

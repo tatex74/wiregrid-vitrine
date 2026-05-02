@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
 <footer class="border-t border-border bg-surface">
   <div class="mx-auto max-w-6xl px-6 py-16">
     <div class="grid grid-cols-2 md:grid-cols-12 gap-10 md:gap-8">
-      <!-- Brand + tagline + newsletter -->
+      <!-- Brand + tagline + legal anchor + newsletter -->
       <div class="col-span-2 md:col-span-5">
         <a href={`/${lang}/`} class="inline-flex items-center gap-2 text-text">
           <Logo class="w-5 h-5 text-brand" />
@@ -22,6 +22,13 @@ const year = new Date().getFullYear();
         <p class="mt-4 text-[14px] text-muted-strong leading-relaxed max-w-sm">
           {t(lang, 'footer.tagline')}
         </p>
+
+        <div class="mt-5 max-w-sm rounded-md border border-border bg-bg-alt/50 p-4 text-[13px] leading-relaxed">
+          <p class="text-text" set:html={t(lang, 'footer.legal_box_html')} />
+          <p class="mt-2 text-muted">
+            <a href={`/${lang}/#faq-company_disappears`} class="text-muted-strong hover:text-brand underline-offset-2 hover:underline">{t(lang, 'footer.continuity_link')}</a>
+          </p>
+        </div>
 
         <form
           class="mt-6 max-w-sm"
@@ -90,9 +97,9 @@ const year = new Date().getFullYear();
       </div>
     </div>
 
-    <div class="mt-14 pt-8 border-t border-border space-y-2 text-[12.5px] text-muted">
+    <div class="mt-14 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-[12.5px] text-muted">
       <p>© {year} Wiregrid. {t(lang, 'footer.rights')}</p>
-      <p set:html={t(lang, 'footer.france_line_html')} />
+      <p>{t(lang, 'footer.tech_line')}</p>
     </div>
   </div>
 </footer>
